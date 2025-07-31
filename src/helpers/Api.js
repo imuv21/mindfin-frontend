@@ -87,6 +87,17 @@ class Api {
         return this.init().get("/hr/getUser")
     }
 
+     getOtp = (body) => {
+        return this.init().post("/hr/get-otp",body)
+    }
+
+     sendInvitationLink = (body) => {
+        return this.init().post("/hr/send-invite",body)
+    }
+
+
+
+
     //designation
 
     getDesignations = () =>{

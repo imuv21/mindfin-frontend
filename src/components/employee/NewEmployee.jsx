@@ -23,27 +23,35 @@ import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
+import Toastify from '@/helpers/Toastify';
+
 
 
 
 export default function NewEmployee() {
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState('personal');
-    const {designations,branches,isEmployeeAddLoading}= useSelector((state)=>state.employee)
-    const [loading, setLoading] = useState({});
-    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-    const [employeeTab, setEmployeeTab] = useState("personal"); // start with the first tab
-    const [completedEmployeeTabs, setCompletedEmployeeTabs] = useState({
-      personal: false,
-      professional: false,
-      documents: false,
-      access: false,
-    });
-    const [alertOpen, setAlertOpen] = useState(false);
-    const [alertMessage, setAlertMessage] = useState('');
-    const [alertSeverity, setAlertSeverity] = useState('error');
-    
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  // const handleInviteClick = () => {
+  //   navigate('/generate-password');
+  // };
+  const [inviteMessage, setInviteMessage] = useState('');
+  const [inviteType, setInviteType] = useState('');
+
+  const [activeTab, setActiveTab] = useState('personal');
+  const { designations, branches, isEmployeeAddLoading } = useSelector((state) => state.employee)
+  const [loading, setLoading] = useState({});
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [employeeTab, setEmployeeTab] = useState("personal"); // start with the first tab
+  const [completedEmployeeTabs, setCompletedEmployeeTabs] = useState({
+    personal: false,
+    professional: false,
+    documents: false,
+    access: false,
+  });
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('error');
+
 
   console.log(designations, "employee sdesignations");
   console.log(branches, "employee branches");
@@ -122,7 +130,7 @@ export default function NewEmployee() {
     setFieldValue,
     setErrors,
     resetForm,
-           setFieldTouched
+    setFieldTouched
   } = useFormik({
     initialValues: {
       firstName: '',
@@ -152,7 +160,7 @@ export default function NewEmployee() {
       workingHours: '',
       dateOfJoin: null,
       dateOfLeave: null,
-      jobType:'',
+      jobType: '',
       officeLocation: '',
       salary: '',
       salaryStartDate: null,
@@ -189,305 +197,334 @@ export default function NewEmployee() {
       }
     },
   });
-
   console.log(values, "values");
 
-        //  const handleImageUpload = async ({ e, fieldPath, setFieldValue, allowedTypes = ["image/jpeg", "image/png", "image/webp"] }) => {
-        //     const file = e.target.files?.[0];
-          
-        //     if (!file) return;
-          
-        //     // Validate file type
-        //     if (!allowedTypes.includes(file.type)) {
-        //       alert("Invalid file format. Supported formats: .jpg, .jpeg, .png, .webp");
-        //       return;
-        //     }
-          
-        //     try {
-        //       const formData = new FormData();
-        //       formData.set("image", file);
-          
-        //       const { data, status } = await api.fileUpload(formData);
-        //       console.log(data, "Uploaded image data");
-          
-        //       if (status === 200) {
-        //         setFieldValue(fieldPath, data.data);
-        //       }
-        //     } catch (error) {
-        //       console.error("Image upload failed:", error);
-        //     }
-        //   };
-          
-         const handleImageUpload = async ({
-            e,
-            fieldPath,
-            setFieldValue,
-            setLoading,
-            allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
-          }) => {
-            const file = e.target.files?.[0];
-          
-            if (!file) return;
-          
-            // Start loading
-            if (setLoading) setLoading(prev => ({ ...prev, [fieldPath]: true }));
-          
-            // Validate file type
-            if (!allowedTypes.includes(file.type)) {
-              alert("Invalid file format. Supported formats: .jpg, .jpeg, .png, .webp");
-              if (setLoading) setLoading(prev => ({ ...prev, [fieldPath]: false }));
-              return;
-            }
-          
-            try {
-              const formData = new FormData();
-              formData.set("image", file);
-          
-              const { data, status } = await api.fileUpload(formData);
-              console.log(data, "Uploaded image data");
-          
-              if (status === 200) {
-                setFieldValue(fieldPath, data.data);
-              }
-            } catch (error) {
-              console.error("Image upload failed:", error);
-            } finally {
-              if (setLoading) setLoading(prev => ({ ...prev, [fieldPath]: false }));
-            }
-          };
 
-          const showAlert = (message, severity = 'error') => {
-            setAlertMessage(message);
-            setAlertSeverity(severity);
-            setAlertOpen(true);
-        };
+  //handle invite
+  const handleSendInvite = async () => {
+    try {
+      if (!values.email) {
+        setInviteMessage('Please enter a valid email before sending invite');
+        setInviteType('error');
+        return;
+      }
 
-          // const handleNext = () => {
-          //   const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-          
-          //   if (tabs[currentIndex].id === 'access') {
-          //     handleSubmit(); 
-          //   } else if (currentIndex < tabs.length - 1) {
-          //     setActiveTab(tabs[currentIndex + 1].id);
-          //   }
-          // };
-
-          const handleNext = async () => {
-            const tabFieldsMap = {
-                personal: [
-                    'firstName', 'lastName', 'phone', 'email', 'profileImg', 'DOB',
-                    'maritalStatus', 'gender', 'nationality', 'familyMember',
-                    'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode',"bloodgroup"
-                ],
-                professional: [
-                    'employeeId', 'userName', 'employeeType', 'professionalEmail', 'branch',
-                    'designation', 'workingDays', 'workingHours', 'dateOfJoin', 'dateOfLeave',
-                    'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendenceLoacation',
-                    'bankName', 'bankBranchName', 'accountName', 'accountNo', 'IFSC', 'SWIFT',
-                    'IBAN', 'bioMetricIp','jobType'
-
-                ],
-                documents: [
-                    , 'appointmentLetter', 'salarySlip', 'relivingLetter',
-                    'experienceLetter', 'aadharCard', 'panCard', 'status'
-                ],
-                access: [] // Optional
-            };
-        
-            console.log("Current Tab:", employeeTab);
-        
-            try {
-                const currentTabFields = tabFieldsMap[employeeTab];
-                const partialSchema = yup.object().shape(
-                    currentTabFields.reduce((acc, field) => {
-                        acc[field] = schema.fields[field];
-                        return acc;
-                    }, {})
-                );
-        
-                await partialSchema.validate(values, { abortEarly: false });
-        
-                setCompletedEmployeeTabs(prev => ({
-                    ...prev,
-                    [employeeTab]: true,
-                }));
-        
-                const tabKeys = Object.keys(tabFieldsMap);
-                console.log("Tab Keys:", tabKeys);
-        
-                const currentTabIndex = tabKeys.indexOf(employeeTab);
-                console.log("Current Tab Index:", currentTabIndex);
-        
-                if (currentTabIndex < tabKeys.length - 1) {
-                    const nextTab = tabKeys[currentTabIndex + 1];
-                    console.log("Next Tab:", nextTab);
-        
-                    setEmployeeTab(nextTab);
-                    setActiveTab(nextTab);
-                } else {
-                    await handleSubmit();
-                }
-            } catch (error) {
-                console.log("Unexpected error during employee tab validation:", error);
-                if (error instanceof yup.ValidationError) {
-                    error.inner.forEach(err => {
-                        setFieldTouched(err.path, true, false);
-                        setFieldValue(err.path, values[err.path]); // re-trigger validation
-                    });
-                }
-            }
-        };
-          
-          
-        
-          // const handleCancel = () => {
-          //   const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-          
-          //   if (tabs[currentIndex].id === 'personal') {
-          //     resetForm(); // Resets the form to initial values
-          //   } else if (currentIndex > 0) {
-          //     setActiveTab(tabs[currentIndex - 1].id); // Go to the previous tab
-          //   }
-          // };
-          const handleCancel = () => {
-            const tabKeys = Object.keys(tabFieldsMap);
-            const currentTabIndex = tabKeys.indexOf(employeeTab);
-        
-            if (currentTabIndex > 0) {
-                // If not on the first tab, go to the previous tab
-                const previousTab = tabKeys[currentTabIndex - 1];
-                setEmployeeTab(previousTab);
-                setActiveTab(previousTab);
-            } else {
-                // If on the first tab, reset the form
-                resetForm(); // Resets the form to initial values
-            }
-        };
+      await api.sendInvitationLink({ email: values.email });
+      setInviteMessage('Invitation link sent successfully!');
+      setInviteType('success');
+    } catch (err) {
+      console.error(err);
+      setInviteMessage(err?.response?.data?.message || 'Failed to send invitation');
+      setInviteType('error');
+    }
+  };
 
 
-          const tabFieldsMap = {
-            personal: [
-              'firstName', 'lastName', 'phone', 'email', 'profileImg', 'DOB',
-              'maritalStatus', 'gender', 'nationality', 'familyMember',
-              'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode',"bloodgroup"
-            ],
-            professional: [
-              'employeeId', 'userName', 'employeeType', 'professionalEmail', 'branch',
-              'designation', 'workingDays', 'workingHours', 'dateOfJoin', 'dateOfLeave',
-              'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendenceLoacation',
-              'bankName', 'bankBranchName', 'accountName', 'accountNo', 'IFSC', 'SWIFT',
-              'IBAN', 'bioMetricIp','jobType'
-            ],
-            documents: [
-              'appointmentLetter', 'salarySlip', 'relivingLetter',
-              'experienceLetter', 'aadharCard', 'panCard', 'status'
-            ],
-            access: [] // optional or account/invite-related fields
-          };
-          
-          
-          // const handleNext = async () => {
-          //   const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-          //   const currentTabId = tabs[currentIndex].id;
-          
-          //   if (currentTabId === 'access') {
-          //     handleSubmit(); // Final submission
-          //     return;
-          //   }
-          
-           
-          // };
-          
+  //  const handleImageUpload = async ({ e, fieldPath, setFieldValue, allowedTypes = ["image/jpeg", "image/png", "image/webp"] }) => {
+  //     const file = e.target.files?.[0];
 
-        //   const handleTabClick = (tabId, tabIndex) => {
-        //     console.log(tabId,tabIndex);
-            
-        //     const tabKeys = Object.keys(tabFieldsMap);
-        //     const currentTabIndex = tabKeys.indexOf(employeeTab);
-    
-        //     if (tabIndex > currentTabIndex && !completedEmployeeTabs[tabKeys[currentTabIndex]]) {
-        //       showAlert("Please complete the current tab before moving to the next one.", 'warning');                return;
-        //     }
-    
-        //     setActiveTab(tabId);
-        //     setEmployeeTab(tabId);
-        // };
+  //     if (!file) return;
+
+  //     // Validate file type
+  //     if (!allowedTypes.includes(file.type)) {
+  //       alert("Invalid file format. Supported formats: .jpg, .jpeg, .png, .webp");
+  //       return;
+  //     }
+
+  //     try {
+  //       const formData = new FormData();
+  //       formData.set("image", file);
+
+  //       const { data, status } = await api.fileUpload(formData);
+  //       console.log(data, "Uploaded image data");
+
+  //       if (status === 200) {
+  //         setFieldValue(fieldPath, data.data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Image upload failed:", error);
+  //     }
+  //   };
+
+  const handleImageUpload = async ({
+    e,
+    fieldPath,
+    setFieldValue,
+    setLoading,
+    allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
+  }) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    // Start loading
+    if (setLoading) setLoading(prev => ({ ...prev, [fieldPath]: true }));
+
+    // Validate file type
+    if (!allowedTypes.includes(file.type)) {
+      alert("Invalid file format. Supported formats: .jpg, .jpeg, .png, .webp");
+      if (setLoading) setLoading(prev => ({ ...prev, [fieldPath]: false }));
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.set("image", file);
+
+      const { data, status } = await api.fileUpload(formData);
+      console.log(data, "Uploaded image data");
+
+      if (status === 200) {
+        setFieldValue(fieldPath, data.data);
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    } finally {
+      if (setLoading) setLoading(prev => ({ ...prev, [fieldPath]: false }));
+    }
+  };
+
+  const showAlert = (message, severity = 'error') => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setAlertOpen(true);
+  };
+
+  // const handleNext = () => {
+  //   const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+
+  //   if (tabs[currentIndex].id === 'access') {
+  //     handleSubmit(); 
+  //   } else if (currentIndex < tabs.length - 1) {
+  //     setActiveTab(tabs[currentIndex + 1].id);
+  //   }
+  // };
 
 
-        const handleTabClick = async (tabId, tabIndex) => {
-          console.log(tabId, tabIndex);
-      
-          const tabKeys = Object.keys(tabFieldsMap);
-          const currentTabIndex = tabKeys.indexOf(employeeTab);
-      
-          if (tabIndex > currentTabIndex) {
-              try {
-                  const currentTabFields = tabFieldsMap[employeeTab];
-                  const partialSchema = yup.object().shape(
-                      currentTabFields.reduce((acc, field) => {
-                          acc[field] = schema.fields[field];
-                          return acc;
-                      }, {})
-                  );
-      
-                  await partialSchema.validate(values, { abortEarly: false });
-      
-                  setCompletedEmployeeTabs(prev => ({
-                      ...prev,
-                      [employeeTab]: true,
-                  }));
-              } catch (error) {
-                  if (error instanceof yup.ValidationError) {
-                      error.inner.forEach(err => {
-                          setFieldTouched(err.path, true, false);
-                          setFieldValue(err.path, values[err.path]); // re-trigger validation
-                      });
-                  }
-                  showAlert("Please complete the current tab before moving to the next one.", 'warning');
-                  return;
-              }
-          }
-      
-          setActiveTab(tabId);
-          setEmployeeTab(tabId);
-      };
-    return (
-        <MainLayout>
-            <ProfileHeader
-            name="Add New Employee"
-            breadcrumbs={["All Employees", "Add New Employee"]}
-            
-            />
-            <div className="mx-4 bg-white border border-[#D9D9D9] rounded-[8px] p-4">
-                {/* Tab Navigation */}
-                <div className="flex overflow-x-auto mb-8 border-b border-gray-200 ">
-                    {tabs.map((tab,index) => (
-                        <button
-                            key={tab.id}
-                            className={`flex items-center px-4 py-3 text-sm mr-2 border-b-2 whitespace-nowrap ${activeTab === tab.id
-                                ? 'border-blue-500 text-blue-500 font-medium'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
-                                }`}
-                            // onClick={() => setActiveTab(tab.id)}
-                            onClick={() => handleTabClick(tab.id, index)}
-                        >
-                            <span className="mr-2">{tab.icon}</span>
-                            {tab.label}
-                        </button>
-                    ))}
-                </div>
-                <Stack spacing={2} sx={{ width: '100%' }}>
-                {alertOpen && (
-                        <Alert
-                            severity={alertSeverity}
-                            onClose={() => setAlertOpen(false)}
-                        >
-                            {alertMessage}
-                        </Alert>
-                    )}
-                </Stack>
-                {/* Personal Information Form (Tab 1) */}
-              
+
+
+
+
+
+
+
+
+  const handleNext = async () => {
+    const tabFieldsMap = {
+      personal: [
+        'firstName', 'lastName', 'phone', 'email', 'profileImg', 'DOB',
+        'maritalStatus', 'gender', 'nationality', 'familyMember',
+        'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode', "bloodgroup"
+      ],
+      professional: [
+        'employeeId', 'userName', 'employeeType', 'professionalEmail', 'branch',
+        'designation', 'workingDays', 'workingHours', 'dateOfJoin', 'dateOfLeave',
+        'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendenceLoacation',
+        'bankName', 'bankBranchName', 'accountName', 'accountNo', 'IFSC', 'SWIFT',
+        'IBAN', 'bioMetricIp', 'jobType'
+
+      ],
+      documents: [
+        , 'appointmentLetter', 'salarySlip', 'relivingLetter',
+        'experienceLetter', 'aadharCard', 'panCard', 'status'
+      ],
+      access: [] // Optional
+    };
+
+    console.log("Current Tab:", employeeTab);
+
+    try {
+      const currentTabFields = tabFieldsMap[employeeTab];
+      const partialSchema = yup.object().shape(
+        currentTabFields.reduce((acc, field) => {
+          acc[field] = schema.fields[field];
+          return acc;
+        }, {})
+      );
+
+      await partialSchema.validate(values, { abortEarly: false });
+
+      setCompletedEmployeeTabs(prev => ({
+        ...prev,
+        [employeeTab]: true,
+      }));
+
+      const tabKeys = Object.keys(tabFieldsMap);
+      console.log("Tab Keys:", tabKeys);
+
+      const currentTabIndex = tabKeys.indexOf(employeeTab);
+      console.log("Current Tab Index:", currentTabIndex);
+
+      if (currentTabIndex < tabKeys.length - 1) {
+        const nextTab = tabKeys[currentTabIndex + 1];
+        console.log("Next Tab:", nextTab);
+
+        setEmployeeTab(nextTab);
+        setActiveTab(nextTab);
+      } else {
+        await handleSubmit();
+      }
+    } catch (error) {
+      console.log("Unexpected error during employee tab validation:", error);
+      if (error instanceof yup.ValidationError) {
+        error.inner.forEach(err => {
+          setFieldTouched(err.path, true, false);
+          setFieldValue(err.path, values[err.path]); // re-trigger validation
+        });
+      }
+    }
+  };
+
+
+
+  // const handleCancel = () => {
+  //   const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+
+  //   if (tabs[currentIndex].id === 'personal') {
+  //     resetForm(); // Resets the form to initial values
+  //   } else if (currentIndex > 0) {
+  //     setActiveTab(tabs[currentIndex - 1].id); // Go to the previous tab
+  //   }
+  // };
+  const handleCancel = () => {
+    const tabKeys = Object.keys(tabFieldsMap);
+    const currentTabIndex = tabKeys.indexOf(employeeTab);
+
+    if (currentTabIndex > 0) {
+      // If not on the first tab, go to the previous tab
+      const previousTab = tabKeys[currentTabIndex - 1];
+      setEmployeeTab(previousTab);
+      setActiveTab(previousTab);
+    } else {
+      // If on the first tab, reset the form
+      resetForm(); // Resets the form to initial values
+    }
+  };
+
+
+  const tabFieldsMap = {
+    personal: [
+      'firstName', 'lastName', 'phone', 'email', 'profileImg', 'DOB',
+      'maritalStatus', 'gender', 'nationality', 'familyMember',
+      'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode', "bloodgroup"
+    ],
+    professional: [
+      'employeeId', 'userName', 'employeeType', 'professionalEmail', 'branch',
+      'designation', 'workingDays', 'workingHours', 'dateOfJoin', 'dateOfLeave',
+      'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendenceLoacation',
+      'bankName', 'bankBranchName', 'accountName', 'accountNo', 'IFSC', 'SWIFT',
+      'IBAN', 'bioMetricIp', 'jobType'
+    ],
+    documents: [
+      'appointmentLetter', 'salarySlip', 'relivingLetter',
+      'experienceLetter', 'aadharCard', 'panCard', 'status'
+    ],
+    access: [] // optional or account/invite-related fields
+  };
+
+
+  // const handleNext = async () => {
+  //   const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+  //   const currentTabId = tabs[currentIndex].id;
+
+  //   if (currentTabId === 'access') {
+  //     handleSubmit(); // Final submission
+  //     return;
+  //   }
+
+
+  // };
+
+
+  //   const handleTabClick = (tabId, tabIndex) => {
+  //     console.log(tabId,tabIndex);
+
+  //     const tabKeys = Object.keys(tabFieldsMap);
+  //     const currentTabIndex = tabKeys.indexOf(employeeTab);
+
+  //     if (tabIndex > currentTabIndex && !completedEmployeeTabs[tabKeys[currentTabIndex]]) {
+  //       showAlert("Please complete the current tab before moving to the next one.", 'warning');                return;
+  //     }
+
+  //     setActiveTab(tabId);
+  //     setEmployeeTab(tabId);
+  // };
+
+
+  const handleTabClick = async (tabId, tabIndex) => {
+    console.log(tabId, tabIndex);
+
+    const tabKeys = Object.keys(tabFieldsMap);
+    const currentTabIndex = tabKeys.indexOf(employeeTab);
+
+    if (tabIndex > currentTabIndex) {
+      try {
+        const currentTabFields = tabFieldsMap[employeeTab];
+        const partialSchema = yup.object().shape(
+          currentTabFields.reduce((acc, field) => {
+            acc[field] = schema.fields[field];
+            return acc;
+          }, {})
+        );
+
+        await partialSchema.validate(values, { abortEarly: false });
+
+        setCompletedEmployeeTabs(prev => ({
+          ...prev,
+          [employeeTab]: true,
+        }));
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          error.inner.forEach(err => {
+            setFieldTouched(err.path, true, false);
+            setFieldValue(err.path, values[err.path]); // re-trigger validation
+          });
+        }
+        showAlert("Please complete the current tab before moving to the next one.", 'warning');
+        return;
+      }
+    }
+
+    setActiveTab(tabId);
+    setEmployeeTab(tabId);
+  };
+  return (
+    <MainLayout>
+      <ProfileHeader
+        name="Add New Employee"
+        breadcrumbs={["All Employees", "Add New Employee"]}
+
+      />
+      <div className="mx-4 bg-white border border-[#D9D9D9] rounded-[8px] p-4">
+        {/* Tab Navigation */}
+        <div className="flex overflow-x-auto mb-8 border-b border-gray-200 ">
+          {tabs.map((tab, index) => (
+            <button
+              key={tab.id}
+              className={`flex items-center px-4 py-3 text-sm mr-2 border-b-2 whitespace-nowrap ${activeTab === tab.id
+                ? 'border-blue-500 text-blue-500 font-medium'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              // onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabClick(tab.id, index)}
+            >
+              <span className="mr-2">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <Stack spacing={2} sx={{ width: '100%' }}>
+          {alertOpen && (
+            <Alert
+              severity={alertSeverity}
+              onClose={() => setAlertOpen(false)}
+            >
+              {alertMessage}
+            </Alert>
+          )}
+        </Stack>
+        {/* Personal Information Form (Tab 1) */}
+
 
         {activeTab === 'personal' && (
           <div className="p-2">
@@ -694,11 +731,11 @@ export default function NewEmployee() {
                       <option value='Canada'>Canada</option>
                       <option value='United Kingdom'>United Kingdom</option>
                       <option value='United States'>United States</option>
-                  </select>
-                      {errors.nationality && touched.nationality && (
-                        <div className="text-red-500 text-sm">{errors.nationality}</div>
-                      )}
-                      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#16151C] pointer-events-none" />
+                    </select>
+                    {errors.nationality && touched.nationality && (
+                      <div className="text-red-500 text-sm">{errors.nationality}</div>
+                    )}
+                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#16151C] pointer-events-none" />
                   </div>
                 </div>
               </div>
@@ -720,28 +757,28 @@ export default function NewEmployee() {
                   )}
                 </div>
                 <div>
-  <select
-    className="w-full p-2 pl-4 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-[#A3A3A3]"
-    name="bloodgroup"
-    value={values.bloodgroup}
-    onChange={handleChange}
-    onBlur={handleBlur}
-  >
-    <option value="">Select Blood Group</option>
-    <option value="A+">A+</option>
-    <option value="A-">A-</option>
-    <option value="B+">B+</option>
-    <option value="B-">B-</option>
-    <option value="AB+">AB+</option>
-    <option value="AB-">AB-</option>
-    <option value="O+">O+</option>
-    <option value="O-">O-</option>
-  </select>
+                  <select
+                    className="w-full p-2 pl-4 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-[#A3A3A3]"
+                    name="bloodgroup"
+                    value={values.bloodgroup}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <option value="">Select Blood Group</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                  </select>
 
-  {errors.bloodgroup && touched.bloodgroup && (
-    <div className="text-red-500 text-sm">{errors.bloodgroup}</div>
-  )}
-</div>
+                  {errors.bloodgroup && touched.bloodgroup && (
+                    <div className="text-red-500 text-sm">{errors.bloodgroup}</div>
+                  )}
+                </div>
 
               </div>
 
@@ -1008,14 +1045,14 @@ export default function NewEmployee() {
                             {designation.designation}
                           </option>
                         ))} */}
-                         {designations &&
-                  designations
-                    .filter((d) => d.designation !== "SUPERADMIN")
-                    .map((designation, index) => (
-                      <option key={index} value={designation._id}>
-                        {designation.designation}
-                      </option>
-                    ))}
+                      {designations &&
+                        designations
+                          .filter((d) => d.designation !== "SUPERADMIN")
+                          .map((designation, index) => (
+                            <option key={index} value={designation._id}>
+                              {designation.designation}
+                            </option>
+                          ))}
                     </select>
                     {errors.designation && touched.designation && (
                       <div className="text-red-500 text-sm mt-1">{errors.designation}</div>
@@ -1493,12 +1530,26 @@ export default function NewEmployee() {
                 );
               })}
 
-              {/* Invite button */}
+              {inviteMessage && (
+                <div
+                  className={`text-sm mt-2 p-2 rounded ${inviteType === 'success'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                    }`}
+                >
+                  {inviteMessage}
+                </div>
+              )}
+
               <div className="pt-2">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out w-full sm:w-auto">
+                <button
+                  onClick={handleSendInvite}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out w-full sm:w-auto"
+                >
                   Invite to create password
                 </button>
               </div>
+
             </div>
 
             <div className="flex justify-end mt-8 space-x-3">
@@ -1518,3 +1569,7 @@ export default function NewEmployee() {
     </MainLayout>
   );
 }
+
+
+
+
