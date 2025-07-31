@@ -1,0 +1,16 @@
+@import "tailwindcss";
+/* .input-style {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm;
+  } */
+
+
+.react-datepicker-wrapper {
+  display: block !important;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+
+
