@@ -67,34 +67,39 @@ const EmailVerificationUI = () => {
   };
 
   const verifyOTP = async (e) => {
-    setLoading(true)
-    try {
+    setLoading(true);
+    e.preventDefault();
 
-      e.preventDefault();
-      // Placeholder for verification functionality
+    try {
       const otpValue = otp.join('');
 
       const body = {
         otp: otpValue,
         email: email
+      };
+
+      const response = await api.verifyOtp(body); // wait for full response
+
+      if (response?.status === 200) {
+        Toastify.success("OTP verification successful");
+
+        // Use `email` not `values.email` since `values` is not defined anywhere
+        // localStorage.setItem('verifiedEmail', email);
+        localStorage.setItem("verifiedEmail", email.trim().toLowerCase());
+        console.log("📥 Email stored in localStorage after verify:", email.trim().toLowerCase());
+
+        navigate("/set-new-password");
+        console.log("OTP Verify Response:", response);
+
       }
-
-      const { data, status } = await api.verifyGeneratedPassword(body)
-
-      if (status === 200) {
-        Toastify.success("OTP verification successfull")
-
-      }
-
-      navigate("/set-new-password")
-
     } catch (error) {
-      Toastify.error(error.response.data.message || `something went wrong`);
+      const errorMessage = error?.response?.data?.message || "Something went wrong";
+      Toastify.error(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
@@ -147,8 +152,8 @@ const EmailVerificationUI = () => {
               // className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors"
               disabled={otp.some(digit => digit === '')}  // Disable if any input is empty
               className={`w-full py-3 rounded-md transition-colors ${otp.some(digit => digit === '')
-                  ? 'bg-gray-400 text-white cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
+                ? 'bg-gray-400 text-white cursor-not-allowed'
+                : 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
                 }`}
             >
               {/* Verify */}
