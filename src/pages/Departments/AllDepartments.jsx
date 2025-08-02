@@ -311,7 +311,7 @@ export default function AllDepartments() {
                               label={emp?.employeeType}
                               sx={{
                                 backgroundColor:
-                                  emp.employeeType === "PERMENENT"
+                                  emp.employeeType === "PERMANENT"
                                     ? "#E6F4EA"
                                     : emp.employeeType === "TEMPORARARY"
                                     ? "#FDECEA"
@@ -321,7 +321,7 @@ export default function AllDepartments() {
                                     ? "#FFF8E1"
                                     : "#F5F5F5",
                                 color:
-                                  emp.employeeType === "PERMENENT"
+                                  emp.employeeType === "PERMANENT"
                                     ? "#219653"
                                     : emp.employeeType === "TEMPORARARY"
                                     ? "#EB5757"

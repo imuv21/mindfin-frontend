@@ -179,7 +179,7 @@ export default function AllEmployee() {
                   onChange={handleStatusChange}
                 >
                   <option value="">All Status</option>
-                  <option value="PERMENENT">Permanent</option>
+                  <option value="PERMANENT">Permanent</option>
                   <option value="TEMPORARARY">Temporary</option>
                   <option value="INTERN">Intern</option>
                   <option value="NOTICEPERIOD">Notice Period</option>

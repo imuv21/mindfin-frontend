@@ -226,10 +226,7 @@ export default function AllEmployeeLeaves() {
               </Box>
             </Box>
 
-            <LeaveModal
-              isOpen={isAddModalOpen}
-              onClose={() => setIsModalOpen(false)}
-            />
+            <LeaveModal isOpen={isAddModalOpen} onClose={() => setIsModalOpen(false)} />
 
             <EditLeaveModal
               isOpen={openEditModal}

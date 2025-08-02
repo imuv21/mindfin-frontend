@@ -11,11 +11,16 @@ import {
 } from '@mui/material';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from "../../redux/userSlice";
+import Toastify from "../../helpers/Toastify";
 
 const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-   const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
+   const navigate = useNavigate();
+   const dispatch = useDispatch();
  
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,12 +30,17 @@ const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
     setAnchorEl(null);
   };
 
-  const handleLogOut = () =>{
-    logout()
-    navigate("/login")
-  }
-
-  console.log(user?.user);
+  const logoutHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(logout());
+      sessionStorage.clear();
+      Toastify.success("Logout Successfully.");
+      navigate('/login');
+    } catch (error) {
+      Toastify.error('Something went wrong!');
+    }
+  };
   
 
   return (
@@ -103,7 +113,7 @@ const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
           {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Logout</MenuItem> */}
            <MenuItem onClick={()=>navigate(`/myProfile`)}>Profile</MenuItem>
-            <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+            <MenuItem onClick={logoutHandler}>Logout</MenuItem>
         </Menu>
       </Box>
     </Box>

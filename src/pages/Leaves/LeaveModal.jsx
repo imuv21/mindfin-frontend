@@ -1,6 +1,6 @@
 
 
-import PDFIMAGE  from "../../../public/pdf-image2.png"
+import PDFIMAGE from "../../../public/pdf-image2.png"
 import { Calendar, ChevronDown } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
@@ -17,16 +17,16 @@ import Toastify from "../../helpers/Toastify";
 
 const LeaveModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
- 
+
   const dispatch = useDispatch()
   const [resumeLoading, setResumeLoading] = useState(false);
-  const [loading,setLoading] = useState (false)
-    const fileInputRef = useRef(null);
-  
+  const [loading, setLoading] = useState(false)
+  const fileInputRef = useRef(null);
+
   const { AllEmployees } = useSelector(
     (state) => state.employee
   );
- 
+
 
   const schema = yup.object().shape({
     employee: yup.string().required('Employee is required'),
@@ -34,52 +34,52 @@ const LeaveModal = ({ isOpen, onClose }) => {
     startDate: yup.date().required('Start date is required'),
     endDate: yup.date()
       .required('End date is required')
-      ,
+    ,
     duration: yup.number().required('Duration is required'),
     reason: yup.string().required('Reason is required'),
     leaveStatus: yup.string().oneOf(['APPROVED', 'PENDING', 'REJECTED']).required('Status is required'),
   });
 
-  const {errors,
+  const { errors,
     values,
     handleChange,
     handleBlur,
     handleSubmit,
     setFieldValue,
-    touched} = useFormik({
-    initialValues: {
-      employee: '',
-      leaveType: '',
-      startDate: null,
-      endDate: null,
-      duration: '',
-      reason: '',
-      leaveStatus: 'PENDING',
-      supporingDoc: []
-    },
-    validationSchema: schema,
-    onSubmit: async(values) => {
-      try {
-        setLoading(true)
-        const {data,status} = await api.addLeave(values)
+    touched } = useFormik({
+      initialValues: {
+        employee: '',
+        leaveType: '',
+        startDate: null,
+        endDate: null,
+        duration: '',
+        reason: '',
+        leaveStatus: 'PENDING',
+        supportingDoc: []
+      },
+      validationSchema: schema,
+      onSubmit: async (values) => {
+        try {
+          setLoading(true)
+          const { data, status } = await api.addLeave(values)
 
-        if(status === 200){
-          dispatch(setRefresh())
-          Toastify.success("Leave added successfully")
-          onClose();
+          if (status === 200) {
+            dispatch(setRefresh())
+            Toastify.success("Leave added successfully")
+            onClose();
 
+          }
+        } catch (error) {
+          Toastify.error(error.response.data.message || `something went wrong`);
+
+        } finally {
+          setLoading(false)
         }
-      } catch (error) {
-                Toastify.error(error.response.data.message || `something went wrong`);
-        
-      }finally{
-        setLoading(false)
       }
-    }
-  });
+    });
 
-  console.log(values,"values");
-  
+  console.log(values, "values");
+
 
   const handleImageUpload = async ({
     e,
@@ -89,34 +89,34 @@ const LeaveModal = ({ isOpen, onClose }) => {
     allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
   }) => {
 
-    
+
     const file = e.target.files?.[0];
-  
+
     if (!file) return;
-  
+
     // Start loading
 
-    
+
     if (setLoading) setLoading(true)
     //  setLoading(prev => ({ ...prev, [fieldPath]: true }));
-    
-  
+
+
     // Validate file type
     if (!allowedTypes.includes(file.type)) {
       alert("Invalid file format. Supported formats: .jpg, .jpeg, .png, .webp");
       if (setLoading) setLoading(false);
       return;
     }
-  
+
     try {
       const formData = new FormData();
       formData.set("image", file);
-  
+
       const { data, status } = await api.fileUpload(formData);
       console.log(data, "Uploaded image data");
-  
+
       if (status === 200) {
-        setFieldValue(fieldPath, data.data,false);
+        setFieldValue(fieldPath, data.data, false);
       }
     } catch (error) {
       console.error("Image upload failed:", error);
@@ -129,17 +129,17 @@ const LeaveModal = ({ isOpen, onClose }) => {
 
   const handleResumeUpload = () => {
     console.log("hi");
-    
+
     if (fileInputRef.current) {
       console.log("hello");
-      
+
       fileInputRef.current.value = null; // Reset value before click
       fileInputRef.current.click();
     }
   };
 
   const handleRemoveResume = () => {
-    setFieldValue('supporingDoc', []);
+    setFieldValue('supportingDoc', []);
   };
 
 
@@ -303,9 +303,6 @@ const LeaveModal = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* File Attachment */}
-         
-
           <div className="w-full mt-5">
             {resumeLoading ? (
               <div className="w-full flex justify-center mt-4">
@@ -313,14 +310,14 @@ const LeaveModal = ({ isOpen, onClose }) => {
               </div>
             ) : (
               <>
-                {values.supporingDoc.length === 0 ? (
+                {values.supportingDoc.length === 0 ? (
                   <div className="flex items-center rounded-md border border-[#E2E2EA] overflow-hidden">
                     <label
                       className="flex-1 px-4 py-2 text-sm text-gray-400 bg-white cursor-pointer"
                       onClick={handleResumeUpload}
                     >
-              Attach supporting document
-              </label>
+                      Attach supporting document
+                    </label>
                     <div
                       className="bg-blue-600 px-4 py-2 text-white text-sm font-medium cursor-pointer"
                       onClick={handleResumeUpload}
@@ -329,49 +326,49 @@ const LeaveModal = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 ) : (
-                  
-          
+
+
                   <div className="mt-2">
-            <p className="text-sm text-gray-500 mb-1.5">Uploaded Document:</p>
-            <div className="flex items-center">
-              {values.supporingDoc[0]?.toLowerCase().endsWith('.pdf') ? (
-                <img
-                  src={PDFIMAGE} // your PDF placeholder image
-                  alt="PDF"
-                  className="w-50 h-40 object-cover"
-                />
-              ) : (
-                <img
-                  src={values.supporingDoc[0]}
-                  alt="resume"
-                  className="w-50 h-40 object-cover"
-                />
-              )}
-            </div>
-          
-            <div className="flex mt-2">
-              <button
-                type="button"
-                onClick={handleRemoveResume}
-                className="text-red-500 ml-2"
-              >
-                Remove
-              </button>
-          
-              <button
-                type="button"
-                onClick={handleResumeUpload}
-                className="text-blue-500 ml-2"
-              >
-                Change Doc
-              </button>
-            </div>
-          </div>
-          
+                    <p className="text-sm text-gray-500 mb-1.5">Uploaded Document:</p>
+                    <div className="flex items-center">
+                      {values.supportingDoc[0]?.toLowerCase().endsWith('.pdf') ? (
+                        <img
+                          src={PDFIMAGE} // your PDF placeholder image
+                          alt="PDF"
+                          className="w-50 h-40 object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={values.supportingDoc[0]}
+                          alt="resume"
+                          className="w-50 h-40 object-cover"
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex mt-2">
+                      <button
+                        type="button"
+                        onClick={handleRemoveResume}
+                        className="text-red-500 ml-2"
+                      >
+                        Remove
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleResumeUpload}
+                        className="text-blue-500 ml-2"
+                      >
+                        Change Doc
+                      </button>
+                    </div>
+                  </div>
+
                 )}
               </>
             )}
-          
+
             {/* Always render the file input */}
             <input
               type="file"
@@ -380,13 +377,13 @@ const LeaveModal = ({ isOpen, onClose }) => {
               onChange={(e) =>
                 handleImageUpload({
                   e,
-                  fieldPath: "supporingDoc",
+                  fieldPath: "supportingDoc",
                   setFieldValue,
                   setLoading: setResumeLoading,
                 })
               }
             />
-          
+
             {/* {touched.resume && errors.resume && (
               <div className="text-red-500 text-sm mt-1">{errors.resume}</div>
             )} */}
@@ -400,13 +397,9 @@ const LeaveModal = ({ isOpen, onClose }) => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-6 py-2 text-sm bg-[#2563EB] text-white rounded-md hover:bg-blue-700 cursor-pointer"
-            >
-{
-                loading ? <CircularProgress color='white' size={25}/> : `Add Leave`
-              }            </button>
+            <button type="submit" className="px-6 py-2 text-sm bg-[#2563EB] text-white rounded-md hover:bg-blue-700 cursor-pointer">
+              {loading ? <CircularProgress color='white' size={25} /> : `Add Leave`}
+            </button>
           </div>
         </form>
       </div>

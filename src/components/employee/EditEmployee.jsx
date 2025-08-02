@@ -105,7 +105,7 @@ export default function EditEmployee() {
         experienceLetter: yup.array().of(yup.string()),
         aadharCard: yup.array().of(yup.string()).min(1, "Aadhar card is required"),
         panCard: yup.array().of(yup.string()).min(1, "Pan card is required"),
-        // status: yup.string().required('Status is required').oneOf(['PERMENENT', 'TEMPORARARY', 'INTERN', 'NOTICEPERIOD'], 'Invalid status'),
+        // status: yup.string().required('Status is required').oneOf(['PERMANENT', 'TEMPORARARY', 'INTERN', 'NOTICEPERIOD'], 'Invalid status'),
       });
 
       const {
@@ -981,7 +981,7 @@ export default function EditEmployee() {
                       onBlur={handleBlur}
                     >
                       <option value="">Select Employee Type</option>
-                      <option value="PERMENENT">Full-time</option>
+                      <option value="PERMANENT">Full-time</option>
                       <option value="TEMPORARARY">Part-time</option>
                       <option value="INTERN">Intern</option>
                       <option value="NOTICEPERIOD">Notice Period</option>

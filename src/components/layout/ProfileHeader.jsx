@@ -11,15 +11,17 @@ import {
 } from '@mui/material';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from "../../redux/userSlice";
+import Toastify from "../../helpers/Toastify";
 
 
 const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const navigate = useNavigate()
-  const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
 
 
   const handleMenuOpen = (event) => {
