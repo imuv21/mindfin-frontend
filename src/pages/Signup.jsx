@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { useAuth } from "../context/AuthContext";
 import { Email, Phone, Person, Work, Badge, BusinessCenter, ArrowDropDown, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
 import * as yup from 'yup';
 import api from '../helpers/Api';

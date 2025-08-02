@@ -1,18 +1,13 @@
 // src/pages/Dashboard.jsx
 import React, { useEffect , useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-// import StatCard from "@/components/dashboard/StatCard";
-// import ActivityChart from "@/components/dashboard/ActivityChart";
-// import EmployeeCounter from "@/components/employee/EmployeeCounter";
-// import { Users, DollarSign, Clock, Briefcase } from "lucide-react";
 import AttendanceOverview from "../components/dashboard/AttendanceOverview";
 import DashboardCards from "../components/dashboard/DashboardCards";
 import HolidayCalendar from "../components/dashboard/HolidayCalendar";
 import AttendanceOverviewTable from "../components/dashboard/AttendanceOverviewTable";
 import { getProfile } from "../redux/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-/* import { Calendar } from "@/components/ui/calendar"; */
-import { addDays, format } from "date-fns"
+import { addDays } from "date-fns";
 import ProfileHeader from "@/components/layout/ProfileHeader";
 
 const Dashboard = () => {

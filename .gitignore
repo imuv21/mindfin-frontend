@@ -1,5 +1,11 @@
-# Logs
-logs
+# ==========================
+# 🌐 Root-level Git Ignore
+# ==========================
+
+# --------------------------
+# 🔥 Common Logs
+# --------------------------
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,18 +13,41 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# --------------------------
+# 📦 Dependencies
+# --------------------------
+**/node_modules/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# --------------------------
+# 🛠 Build Artifacts
+# --------------------------
+**/build/
+**/dist/
+.vite/
+
+# --------------------------
+# 🔐 Environment Variables
+# --------------------------
+**/.env*
+.env*  # handles root .env and variants like .env.local
+
+# --------------------------
+# 🧠 Editor / OS Specific
+# --------------------------
+.vscode/
+.idea/
 .DS_Store
+Thumbs.db
+ehthumbs.db
+
+# VS-related
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# --------------------------
+# ✅ workspace settings
+# --------------------------
+!.vscode/extensions.json

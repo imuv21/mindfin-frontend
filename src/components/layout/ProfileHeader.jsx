@@ -13,15 +13,14 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../../context/AuthContext"
+import { logout } from "../../redux/userSlice";
 
 
 const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate()
   const user = useSelector((state) => state.user);
-     const { logout } = useAuth();
-   
+
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,10 +30,16 @@ const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
     setAnchorEl(null);
   };
 
-  const handleLogOut = () =>{
-    logout()
-    navigate("/login")
-
+  const logoutHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(logout());
+      sessionStorage.clear();
+      Toastify.success("Logout Successfully.");
+      navigate('/login');
+    } catch (error) {
+      Toastify.error('Something went wrong!');
+    }
   }
 
   return (
@@ -91,8 +96,8 @@ const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
           onClick={handleMenuOpen}
         >
           <Avatar
-  src={user?.user?.profileImg?.[0] || ""}
-  sx={{ width: 30, height: 30, mr: 1 }}
+            src={user?.user?.profileImg?.[0] || ""}
+            sx={{ width: 30, height: 30, mr: 1 }}
           />
           <Box>
             <Typography fontSize="14px" fontWeight={500} mr={0.5}>
@@ -104,8 +109,8 @@ const ProfileHeader = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
         </Paper>
 
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-          <MenuItem onClick={()=>navigate(`/myProfile`)}>Profile</MenuItem>
-          <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+          <MenuItem onClick={() => navigate(`/myProfile`)}>Profile</MenuItem>
+          <MenuItem onClick={logoutHandler}>Logout</MenuItem>
         </Menu>
       </Box>
     </Box>

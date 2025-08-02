@@ -72,11 +72,11 @@ const MyProfile = () => {
 
         const { status } = await api.changeProPic(body);
 
-        if (status === 200) {
-          const response = dispatch(getProfile());
-          await unwrapResult(response);
-          Toastify.success("Profile picture updated successfully");
-        }
+        // if (status === 200) {
+        //   const response = dispatch(getProfile());
+        //   await unwrapResult(response);
+        //   Toastify.success("Profile picture updated successfully");
+        // }
       }
     } catch (error) {
       Toastify.error(error.response.data.message || `something went wrong`);

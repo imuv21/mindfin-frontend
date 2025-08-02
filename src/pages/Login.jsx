@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
-import { useAuth } from "../context/AuthContext";
 import { Email, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
 import * as yup from 'yup';
-import api from '../helpers/Api';
+import { loginUser } from '../redux/userSlice';
 import Toastify from '../helpers/Toastify';
 import MultiBranchModal from "../components/auth/MultiBranchModal";
 import CoverImage from "@/components/auth/CoverImage";
@@ -15,7 +15,7 @@ import styles from './auth.module.css';
 const Login = () => {
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -31,54 +31,34 @@ const Login = () => {
     password: yup.string().required("Password is required"),
   });
 
-  // Formik setup
   const {
     errors,
     values,
     handleChange,
     handleBlur,
     handleSubmit,
-  setFieldValue,
+    setFieldValue,
     touched
   } = useFormik({
     initialValues: {
       email: '',
-      password: '',
-      // rememberMe: false,
+      password: ''
     },
     validationSchema: schema,
     onSubmit: async (values) => {
+      if (loading) return;
       setLoading(true);
       try {
-        const { data, status } = await api.login(values);
-        console.log(data, "DATA");
+        await dispatch(loginUser(values)).unwrap();
+        Toastify.success("Login successfully.");
+        navigate('/myProfile');
 
-        if (status === 200) {
-          // Toastify.success("Login successful");
-          // navigate('/dashboard');
-          console.log(data, "data");
-
-          if (data.data.isMultipleBranch) {
-            console.log("hi");
-
-            setIsMultiBranch(true);
-            setBranches(data.data.branches);
-          } else {
-            console.log("hello");
-
-            localStorage.setItem('accessToken', data.data.token);
-            Toastify.success("Login successful");
-            login();
-
-            navigate('/myProfile');
-          }
-        }
-      } catch (error) {
-        Toastify.error(error.response.data.message || `something went wrong`);
+      } catch (err) {
+        Toastify.error(err?.message || "Login failed!");
       } finally {
         setLoading(false);
       }
-    },
+    }
   });
 
   const handleBranchSelect = async (branch) => {

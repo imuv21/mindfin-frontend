@@ -1,5 +1,5 @@
 import axios from "axios";
-import FormData from "form-data";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const getToken = async () => {
     try {
@@ -10,29 +10,23 @@ const getToken = async () => {
     }
 };
 
-
-//
 class Api {
     constructor() {
         this.client = null;
-        // this.api_url = process.env.NODE_ENV === "development" ? "https://kingster.universalairproducts.com/api" : `https://kingster.universalairproducts.com/api`;
-        // this.api_url = process.env.NODE_ENV === "development" ? "https://missy-and-moppet.universalairproducts.com/mindfin/api" : `https://missy-and-moppet.universalairproducts.com/mindfin/api`;
-        this.api_url = process.env.NODE_ENV === "development" ? "http://localhost:5050/api" : `http://localhost:5050/api`;
-        //ddev url
+        this.api_url = BASE_URL;
     }
 
     init = (type) => {
 
         let headers;
-
         headers = {
             Accept: "application/json",
         }
-
         if (type === "multipart/form-data") {
             headers = {
+                ...headers,
                 'Content-Type': 'multipart/form-data',
-            }
+            };
         }
 
         this.client = axios.create({
@@ -40,19 +34,16 @@ class Api {
             timeout: 31000,
             headers: headers,
         });
-
         this.client.interceptors.request.use(async (config) => {
             const token = await getToken();
-
             config.headers["Authorization"] = `Bearer ${token}`
             return config;
         }, (error) => {
             throw error;
         })
-
         return this.client;
     };
-
+    
 
     // login
     generatePassword = (body) => {
@@ -107,30 +98,22 @@ class Api {
     addEmployee = (body) => {
         return this.init().post("/hr/add-employee", body)
     }
-    
 
 
     //designation
-
     getDesignations = () => {
         return this.init().get("/super-admin/get-all-desigantions")
     }
 
     //branches
-
     getBranches = () => {
         return this.init().get("/super-admin/get-all-branch")
-
     }
 
     //employees
-
     getEmployees = (body) => {
-        // console.log(body,"bodd");
-
         return this.init().get(`/hr/get-all-employees?${body}`)
     }
-    
     editEmployee = (body) => {
         return this.init().put(`/hr/edit-employee/${body?._id}`, body)
     }
@@ -140,8 +123,8 @@ class Api {
     getAnEmployee = (body) => {
         return this.init().get(`/hr/get-details-employee/${body}`)
     }
-    getEmployeeCumulativeAttenedence = (body) => {
-        return this.init().get(`/hr/get-cumulative-attetence/${body}`)
+    getEmployeeCumulativeAttendance = (body) => {
+        return this.init().get(`/hr/get-cumulative-attendance/${body}`)
     }
     getEmployeeCumulativeLeave = (body) => {
         return this.init().get(`/hr/get-cumulative-leaves/${body}`)
@@ -152,7 +135,6 @@ class Api {
 
 
     //attendence
-
     getAttendence = (body) => {
         // console.log(body,"bodd");
 
@@ -166,7 +148,6 @@ class Api {
 
 
     //designation & departments
-
     getAlldepartmentEmployees = (body) => {
 
         return this.init().get(`/hr/get-all-department?name=${body}`)
@@ -178,7 +159,6 @@ class Api {
 
 
     //jobs
-
     addJob = (body) => {
         return this.init().post("/hr/create-job", body)
     }
@@ -203,7 +183,6 @@ class Api {
 
 
     //candidates
-
     getAllCandidates = (body) => {
         return this.init().get(`/hr/get-all-candidates?${body}`)
     }
@@ -221,7 +200,6 @@ class Api {
     }
 
     //holidays
-
     addHoliday = (body) => {
         return this.init().post(`/hr/create-holiday`, body)
     }
@@ -239,7 +217,6 @@ class Api {
     }
 
     //leaves
-
     addLeave = (body) => {
         return this.init().post('/hr/create-leave', body)
     }
@@ -258,7 +235,6 @@ class Api {
 
 
     //pay-slip
-
     getEmployeeCounts = () => {
         return this.init().get(`/hr/get-employee-count`)
     }
@@ -282,7 +258,6 @@ class Api {
     }
 
     //pay-roll
-
     payRollCardData = () => {
         return this.init().get('/hr/get-salary-details')
     }
@@ -305,15 +280,12 @@ class Api {
 
 
     //settings
-
-
     changeProPic = (body) => {
         return this.init().put(`/hr/change-image/${body._id}`, body)
     }
 
 
     //dashboard
-
     getbranchDatas = () => {
         return this.init().get(`/hr/get-branch-data`)
     }
@@ -330,7 +302,6 @@ class Api {
 
 
     // Data - entry
-
     addLead = (body) => {
         return this.init().post(`/tele-caller/add-leads`, body)
     }
@@ -351,27 +322,14 @@ class Api {
     }
 
 
-
-
-
-
-
     //upload-photo
-
     fileUpload = (data, config) => {
         return this.init('multipart/form-data').post("/hr/uploadFile", data)
     }
     downloadPhoto = (data) => {
         return this.init().get(`/hr/download-file?url=${data}`, { responseType: "blob" })
     }
-
-
-
-
-
-
-}
+};
 
 const api = new Api();
-
-export default api
+export default api;

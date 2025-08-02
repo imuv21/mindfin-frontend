@@ -1,6 +1,8 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Protector from "./components/auth/Protector";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -9,7 +11,6 @@ import EmailVerificationUI from "./pages/EmailVerification";
 import SetPasswordUI from "./pages/SetPasswordUI";
 import SetForgotPassword from "./pages/SetForgotPassword";
 import ForgotPassword from "./pages/ForgotPassword";
-import { ToastContainer } from 'react-toastify'
 import OtpVerification from "./pages/OtpVerification";
 
 import NewEmployee from "./components/employee/NewEmployee";
@@ -34,215 +35,82 @@ import GeneratePayroll from "./pages/Payroll/GeneratePayroll";
 import AllHolidayLists from "./pages/Holidays/AllHolidayLists";
 import MyProfile from "./pages/Profile/MyProfile";
 import Notification from "./pages/Notification/Notification";
-import { useAuth } from "./context/AuthContext";
 import EditPayslip from "./pages/Payroll/EditPayslip";
 import ViewLeadData from "./DataEntry/ViewLeadData";
 import EditLeadForm from "./DataEntry/EditLeadForm";
 import UploadDocumnet from "./DataEntry/UploadDocumnet";
 import LeadDataList from "./DataEntry/LeadDataList";
 import AdminLeadDataList from "./AdminModule/AdminLeadDataList";
-// Import other pages here and there
 
-
-
-
-// const checkAuthentication = () => {
-//   const token = localStorage.getItem('accessToken');
-//   console.log(token,"from app");
-
-//   return !!token; // Returns true if token exists, false otherwise
-// };
+import NotFound from "./pages/NotFound";
 
 
 const App = () => {
-  // Simple auth check - in a real app, you'd use a proper auth system
-  const { isAuthenticated } = useAuth();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('accessToken');
-  //   console.log("app.jsx");
-
-  //   setIsAuthenticated(!!token);
-  // }, []);
-
-  // useEffect(() => {
-  //   const handleStorageChange = () => {
-  //     setIsAuthenticated(checkAuthentication());
-  //   };
-
-  //   // Add event listener for storage changes
-  //   window.addEventListener('storage', handleStorageChange);
-
-  //   // Clean up the event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener('storage', handleStorageChange);
-  //   };
-  // }, []);
-
+  const user = useSelector((state) => state.user.user);
 
   return (
 
-    // <AuthProvider>
     <Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        theme='dark'
-        style={{ width: "350px" }}
-      >
 
-      </ToastContainer>
+      <ToastContainer position="top-right" autoClose={2000} theme='dark' style={{ width: "350px" }} />
+
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/generate-password"
-          element={<GeneratePassword />}
-        />
-        <Route
-          path="/email-verification"
-          element={<EmailVerificationUI />}
-        />
-        <Route
-          path="/otp-verification"
-          element={<OtpVerification />}
-        />
-        <Route
-          path="/set-new-password"
-          element={<SetPasswordUI />}
-        />
-        <Route
-          path="/reset-password"
-          element={<SetForgotPassword />}
-        />
-        <Route
-          path="/forget-password"
-          element={<ForgotPassword />}
-        />
-        <Route
-          path="/"
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
-        />
-        <Route
-          path="/dashboard"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/newEmployee"
-          element={isAuthenticated ? <NewEmployee /> : <Navigate to="/newEmployee" />}
-        />
-        <Route
-          path="/allEmployee"
-          element={isAuthenticated ? <AllEmployee /> : <Navigate to="/allEmployee" />}
-        />
-        <Route
-          path="/viewEmployee/:id"
-          element={isAuthenticated ? <ViewEmployee /> : <Navigate to="/viewEmployee" />}
-        />
-        <Route
-          path="/editEmployee/:id"
-          element={isAuthenticated ? <EditEmployee /> : <Navigate to="/editEmployee" />}
-        />
-        <Route
-          path="/allAttendance"
-          element={isAuthenticated ? <AllAttendance /> : <Navigate to="/allAttendance" />}
-        />
-        <Route
-          path="/dailyAttendance"
-          element={isAuthenticated ? <DailyAttendance /> : <Navigate to="/dailyAttendance" />}
-        />
-        <Route
-          path="/allBranches"
-          element={isAuthenticated ? <AllBranches /> : <Navigate to="/allBranches" />}
-        />
-        <Route 
-          path="/allDepartments/:id" 
-          element={isAuthenticated ? <AllDepartments /> : <Navigate to="/allDepartments" />} 
-        />
-        <Route
-          path="/allDesignations"
-          element={isAuthenticated ? <AllDesignations /> : <Navigate to="/allDesignations" />}
-        />
-        <Route
-          path="/monthlyAttendance"
-          element={isAuthenticated ? <MonthlyAttendance /> : <Navigate to="/monthlyAttendance" />}
-        />
-        <Route 
-          path="/allPayroll" 
-          element={isAuthenticated ? <AllEmployeePayroll /> : <Navigate to="/allPayroll" />} 
-        />
-        <Route
-          path="/createPayslip"
-          element={isAuthenticated ? <CreatePayslip /> : <Navigate to="/createPayslip" />}
-        />
-        <Route 
-          path="/editPayslip/:id" 
-          element={isAuthenticated ? <EditPayslip /> : <Navigate to="/editPayslip/:id" />} 
-        />
-        <Route 
-          path="/generatePayroll" 
-          element={isAuthenticated ? <GeneratePayroll /> : <Navigate to="/generatePayroll" />} 
-        />
-        <Route
-          path="/employeesSalary"
-          element={isAuthenticated ? <EmployeesSalary /> : <Navigate to="/employeesSalary" />}
-        />
-        <Route 
-          path="/payslipView/:id" 
-          element={isAuthenticated ? <PayslipView /> : <Navigate to="/payslipView/:id" />} 
-        />
-        <Route
-          path="/salaryDefnition"
-          element={isAuthenticated ? <SalaryDefnition /> : <Navigate to="/salaryDefnition" />}
-        />
-        <Route
-          path="/allEmployeeLeaves"
-          element={isAuthenticated ? <AllEmployeeLeaves /> : <Navigate to="/allEmployeeLeaves" />}
-        />
-        <Route
-          path="/allJobs"
-          element={isAuthenticated ? <AllJobs /> : <Navigate to="/allJobs" />}
-        />
-        <Route
-          path="/allCandidates"
-          element={isAuthenticated ? <AllCandidates /> : <Navigate to="/allCandidates" />}
-        />
-        <Route
-          path="/allHolidayLists"
-          element={isAuthenticated ? <AllHolidayLists /> : <Navigate to="/allHolidayLists" />}
-        />
-        <Route
-          path="/myProfile"
-          element={isAuthenticated ? <MyProfile /> : <Navigate to="/myProfile" />}
-        />
-        <Route
-          path="/notification"
-          element={isAuthenticated ? <Notification /> : <Navigate to="/notification" />}
-        />
-        <Route
-          path="/leadDataList"
-          element={isAuthenticated ? <LeadDataList /> : <Navigate to="/leadDataList" />}
-        />
-        <Route
-          path="/viewLeadData/:id"
-          element={isAuthenticated ? <ViewLeadData /> : <Navigate to="/viewLeadData/:id" />}
-        />
-        <Route
-          path="/editLeadForm/:id"
-          element={isAuthenticated ? <EditLeadForm /> : <Navigate to="/editLeadForm/:id" />}
-        />
-        <Route
-          path="/uploadDocument"
-          element={isAuthenticated ? <UploadDocumnet /> : <Navigate to="/uploadDocument" />}
-        />
-        <Route
-          path="/adminLeadDataList"
-          element={isAuthenticated ? <AdminLeadDataList /> : <Navigate to="/adminLeadDataList" />}
-        />
-      </Routes>
-    </Router>
 
-    // </AuthProvider>
+        {/* Redirect root path */}
+        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+
+        {/* Public routes - only accessible when not authenticated */}
+        <Route element={<Protector user={user} redirectTo="/dashboard" />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/generate-password" element={<GeneratePassword />} />
+          <Route path="/email-verification" element={<EmailVerificationUI />} />
+          <Route path="/otp-verification" element={<OtpVerification />} />
+          <Route path="/set-new-password" element={<SetPasswordUI />} />
+          <Route path="/reset-password" element={<SetForgotPassword />} />
+          <Route path="/forget-password" element={<ForgotPassword />} />
+        </Route>
+
+        {/* Private routes - require authentication */}
+        <Route element={<Protector isPrivate user={user} redirectTo="/login" />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/newEmployee" element={<NewEmployee />} />
+          <Route path="/allEmployee" element={<AllEmployee />} />
+          <Route path="/viewEmployee/:id" element={<ViewEmployee />} />
+          <Route path="/editEmployee/:id" element={<EditEmployee />} />
+          <Route path="/allAttendance" element={<AllAttendance />} />
+          <Route path="/dailyAttendance" element={<DailyAttendance />} />
+          <Route path="/allBranches" element={<AllBranches />} />
+          <Route path="/allDepartments/:id" element={<AllDepartments />} />
+          <Route path="/allDesignations" element={<AllDesignations />} />
+          <Route path="/monthlyAttendance" element={<MonthlyAttendance />} />
+          <Route path="/allPayroll" element={<AllEmployeePayroll />} />
+          <Route path="/createPayslip" element={<CreatePayslip />} />
+          <Route path="/editPayslip/:id" element={<EditPayslip />} />
+          <Route path="/generatePayroll" element={<GeneratePayroll />} />
+          <Route path="/employeesSalary" element={<EmployeesSalary />} />
+          <Route path="/payslipView/:id" element={<PayslipView />} />
+          <Route path="/salaryDefnition" element={<SalaryDefnition />} />
+          <Route path="/allEmployeeLeaves" element={<AllEmployeeLeaves />} />
+          <Route path="/allJobs" element={<AllJobs />} />
+          <Route path="/allCandidates" element={<AllCandidates />} />
+          <Route path="/allHolidayLists" element={<AllHolidayLists />} />
+          <Route path="/myProfile" element={<MyProfile />} />
+          <Route path="/notification" element={<Notification />} />
+          <Route path="/leadDataList" element={<LeadDataList />} />
+          <Route path="/viewLeadData/:id" element={<ViewLeadData />} />
+          <Route path="/editLeadForm/:id" element={<EditLeadForm />} />
+          <Route path="/uploadDocument" element={<UploadDocumnet />} />
+          <Route path="/adminLeadDataList" element={<AdminLeadDataList />} />
+        </Route>
+
+        {/* Redirect all unknown paths */}
+        <Route path="*" element={<NotFound />} />
+
+      </Routes>
+
+    </Router>
   );
 };
 

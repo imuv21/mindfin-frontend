@@ -1,412 +1,185 @@
-// import { useState } from 'react';
-// import CoverImage from '@/components/auth/CoverImage';
-// import { PasswordSuccessModal } from '@/components/auth/PasswordModal';
-
-//  const  SetPasswordUI =() =>{
-//   const [password, setPassword] = useState('');
-//   const [confirmPassword, setConfirmPassword] = useState('');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-//   const [error, setError] = useState('');
-//   const [showModal, setShowModal] = useState(false);
 
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     if (password !== confirmPassword) {
-//       setError('Passwords do not match');
-//       return;
-//     }
-
-//     if (password.length < 8) {
-//       setError('Password must be at least 8 characters long');
-//       return;
-//     }
-
-//     setError('');
-//     // Handle password submission here
-//     alert('Password set successfully');
-//     setShowModal(true)
-
-//   };
-
-//   const togglePasswordVisibility = () => {
-//     setShowPassword(!showPassword);
-//   };
-
-//   const toggleConfirmPasswordVisibility = () => {
-//     setShowConfirmPassword(!showConfirmPassword);
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-//       {/* Left side: Dashboard Cover */}
-//       <div className="w-full md:w-1/2">
-//              <CoverImage/>
-//             </div>
-
-//       {/* Right side: Password Setup */}
-//       <div className="w-full md:w-1/2 flex items-center justify-center p-8">
-//         <div className="w-full max-w-md">
-//           <h1 className="text-3xl font-bold mb-2">Set the password</h1>
-//           <p className="text-gray-500 mb-8">Enter your password below</p>
-
-//           <form onSubmit={handleSubmit}>
-//             {error && (
-//               <div className="text-red-500 mb-4 text-sm">
-//                 {error}
-//               </div>
-//             )}
-
-//             <div className="mb-6 relative">
-//               <div className="relative">
-//                 <input
-//                   type={showPassword ? "text" : "password"}
-//                   id="password"
-//                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
-//                   placeholder="Enter Password"
-//                   value={password}
-//                   onChange={(e) => setPassword(e.target.value)}
-//                   required
-//                 />
-//                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-//                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-//                   </svg>
-//                 </div>
-//                 <button 
-//                   type="button" 
-//                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-//                   onClick={togglePasswordVisibility}
-//                 >
-//                   {showPassword ? (
-//                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-//                     </svg>
-//                   ) : (
-//                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-//                     </svg>
-//                   )}
-//                 </button>
-//               </div>
-//             </div>
-
-//             <div className="mb-8 relative">
-//               <div className="relative">
-//                 <input
-//                   type={showConfirmPassword ? "text" : "password"}
-//                   id="confirmPassword"
-//                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
-//                   placeholder="Confirm Password"
-//                   value={confirmPassword}
-//                   onChange={(e) => setConfirmPassword(e.target.value)}
-//                   required
-//                 />
-//                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-//                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-//                   </svg>
-//                 </div>
-//                 <button 
-//                   type="button" 
-//                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-//                   onClick={toggleConfirmPasswordVisibility}
-//                 >
-//                   {showConfirmPassword ? (
-//                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-//                     </svg>
-//                   ) : (
-//                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-//                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-//                     </svg>
-//                   )}
-//                 </button>
-//               </div>
-//             </div>
-
-//             <button 
-//               type="submit"
-//               className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors"
-//             >
-//               Submit
-//             </button>
-//           </form>
-//         </div>
-//       </div>
-//                   <PasswordSuccessModal 
-//                           isOpen={showModal} 
-//                           onClose={() => setShowModal(false)} 
-//                         />
-
-//     </div>
-//   );
-// }
-
-// export default  SetPasswordUI
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import CoverImage from '@/components/auth/CoverImage';
 import { PasswordSuccessModal } from '@/components/auth/PasswordModal';
-import api from '@/helpers/Api'; // Ensure you have this API helper set up
+import api from '../helpers/Api';
 import Toastify from '@/helpers/Toastify';
+import { useNavigate } from 'react-router-dom';
 
 const SetPasswordUI = () => {
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
 
-  const email = localStorage.getItem('email')
-
+  // Load email from localStorage on mount
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('verifiedEmail');
+    console.log(" Email on mount storedEmail:", storedEmail);
+    if (!storedEmail) {
+      Toastify.error('No verified email found. Please go back.');
+      navigate('/verify-otp');
+    } else {
+      setEmail(storedEmail);
+    }
+  }, [navigate]);
 
   const schema = yup.object().shape({
-    password: yup.string()
+    password: yup
+      .string()
       .required('Password is required')
       .min(8, 'Password must be at least 8 characters long'),
-    confirmPassword: yup.string()
+    confirmPassword: yup
+      .string()
       .required('Confirm Password is required')
       .oneOf([yup.ref('password'), null], 'Passwords must match'),
   });
 
-  const {
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    setFieldValue,
-    resetForm
-  } = useFormik({
+  const formik = useFormik({
     initialValues: {
       password: '',
       confirmPassword: '',
-      email: email
     },
     validationSchema: schema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
-        setLoading(true)
-        const { data, status } = await api.setNewPassword(values);
+        console.log("🟡 Submitting set-password form...");
+        setLoading(true);
+        // const email = localStorage.getItem('verifiedEmail');
+        const email = localStorage.getItem("verifiedEmail")?.trim().toLowerCase();
+        console.log("📤 Email retrieved for set-password:", email);
+        console.log("📦 Retrieved email from localStorage:", email);
+        console.log("🔐 Password entered:", values.password);
+        if (!email) {
+          console.error("❌ Email is missing in localStorage.");
+          Toastify.error("Email not found. Please verify your email again.");
+          return;
+        }
+        const payload = {
+          email: email.toLowerCase(),
+          password: values.password,
+        };
+        console.log("📤 Sending payload to backend:", payload);
+        const { status } = await api.setPassword(payload);
+        console.log("✅ Backend responded with status:", status);
         if (status === 200) {
           Toastify.success('Password set successfully');
           setShowModal(true);
-          resetForm()
+          resetForm();
+          localStorage.removeItem('verifiedEmail');
+          console.log("🧹 localStorage cleaned. Redirecting to login...");
+
+          setTimeout(() => {
+            navigate('/login');
+          }, 2000);
         }
       } catch (error) {
+        console.error("❌ Error occurred while setting password:", error);
+        console.error("🔴 Full error response:", error.response?.data);
+        console.log("❌ URL causing error:", error.config?.url);
         Toastify.error(error.response?.data?.message || 'Something went wrong');
       } finally {
-        setLoading(false)
+        console.log("🟢 Finished set-password submission");
+        setLoading(false);
       }
     },
+
   });
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Left Panel */}
-      <div className="w-1/2  flex flex-col flex-start items-center bg-blue-600 text-white p-8">
+      <div className="w-full md:w-1/2 flex flex-col items-center bg-blue-600 text-white p-8">
         <CoverImage />
-        <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-        <p className="text-sm text-center max-w-sm">
+        <h1 className="text-2xl font-bold mt-4">Dashboard</h1>
+        <p className="text-sm text-center max-w-sm mt-2">
           Everything you need in an easily customizable dashboard.
         </p>
       </div>
 
-      {/* Right side: Password Setup */}
+      {/* Right Panel */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <h1 className="text-3xl font-bold mb-2">Set the password</h1>
+          <h1 className="text-3xl font-bold mb-2">Set Your Password</h1>
           <p className="text-gray-500 mb-8">Enter your password below</p>
 
-          <form onSubmit={handleSubmit}>
-            {errors.password && touched.password && (
-              <div className="text-red-500 mb-4 text-sm">{errors.password}</div>
-            )}
+          <form onSubmit={formik.handleSubmit}>
+            {/* Password */}
             <div className="mb-6 relative">
+              {formik.touched.password && formik.errors.password && (
+                <div className="text-red-500 mb-2 text-sm">{formik.errors.password}</div>
+              )}
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
-                  placeholder="Enter Password"
-                  value={values.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                   name="password"
-                // required
+                  placeholder="Enter Password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
                 />
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    ></path>
-                  </svg>
-                </div>
+                {/* Eye Icon */}
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  onClick={togglePasswordVisibility}
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                      ></path>
-                    </svg>
+                    <i className="fas fa-eye-slash"></i>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      ></path>
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      ></path>
-                    </svg>
+                    <i className="fas fa-eye"></i>
                   )}
                 </button>
               </div>
             </div>
 
-            {errors.confirmPassword && touched.confirmPassword && (
-              <div className="text-red-500 mb-4 text-sm">{errors.confirmPassword}</div>
-            )}
-            <div className="mb-8 relative">
+            {/* Confirm Password */}
+            <div className="mb-6 relative">
+              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                <div className="text-red-500 mb-2 text-sm">{formik.errors.confirmPassword}</div>
+              )}
               <div className="relative">
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
-                  placeholder="Confirm Password"
-                  value={values.confirmPassword}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                   name="confirmPassword"
-                // required
+                  placeholder="Confirm Password"
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
                 />
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    ></path>
-                  </svg>
-                </div>
+                {/* Eye Icon */}
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  onClick={toggleConfirmPasswordVisibility}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                      ></path>
-                    </svg>
+                    <i className="fas fa-eye-slash"></i>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      ></path>
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      ></path>
-                    </svg>
+                    <i className="fas fa-eye"></i>
                   )}
                 </button>
               </div>
             </div>
 
-            {/* <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Submit
-            </button> */}
-
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors"
-              disabled={loading} // Disable button while loading
+              disabled={loading}
             >
               {loading ? (
-                <div className="flex items-center justify-center">
+                <div className="flex justify-center items-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="animate-spin h-5 w-5 mr-3 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -425,7 +198,7 @@ const SetPasswordUI = () => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  <span>Loading...</span>
+                  Loading...
                 </div>
               ) : (
                 'Submit'
@@ -434,6 +207,8 @@ const SetPasswordUI = () => {
           </form>
         </div>
       </div>
+
+      {/* Success Modal */}
       <PasswordSuccessModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>
   );

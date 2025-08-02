@@ -1,137 +1,81 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from "../helpers/Api";
-// import api from "../helper/Api";
-// import { toast } from "react-toastify";
-// import Toastify from "../helper/Toastify";
+
+
+export const loginUser = createAsyncThunk(
+    'user/loginUser',
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await api.login(userData);
+            console.log(response.data);
+            return response.data.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const message = error.response.data.message || 'Login failed';
+                return rejectWithValue({ message });
+            }
+            return rejectWithValue({ message: "Something went wrong" });
+        }
+    }
+);
+
+export const getProfile = createAsyncThunk(
+    'user/getProfile',
+    async (_, { rejectWithValue, dispatch }) => {
+        try {
+            const { data, status } = await api.WhoAmI();
+            if (status === 200) {
+                dispatch(setUserData(data.data));
+            }
+        } catch (err) {
+            return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+        }
+    }
+);
 
 const initialState = {
-    isLoggedIn: false,
-    user: {},
-    verifyObject: {},
-    data: null,
-    errorMsg: "",
-    isError: false,
-    token: null
-}
 
-export const getProfile = createAsyncThunk('getProfile', async (body, { rejectWithValue, dispatch }) => {
-    try {
-        const { data, status } = await api.WhoAmI()
-        console.log('Userdata', data);
+    user: null,
+    token: null,
+    logLoading: false,
+    logError: null,
 
-        if (status === 200) {
-            // return {
-            //     userData: data?.data?.data,
-            //     verifyObject: data?.data?.verifyObject,
-            // };
-            dispatch(setUserData(data.data))
-        }
-    } catch (err) {
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-    }
-}
-)
-
-// export const updateProfile = createAsyncThunk('updateProfile', async (body, { rejectWithValue, dispatch }) => {
-//     try {
-//         const { data, status } = await api.updateProfile(body);
-
-//         if (status === 200) {
-//             setUserData(data.data)
-//             Toastify.success("Profile update successful")
-//             return data.data
-//         }
-//     } catch (err) {
-//         Toastify.error(err.response.data.message || "'Something went wrong. Please try again later.'")
-//         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-//     }
-// }
-// )
-
-
-// export const updatePassword = createAsyncThunk('updatePassword', async (body, { rejectWithValue, dispatch }) => {
-//     try {
-//         const { data, status } = await api.updatePassword(body);
-
-//         if (status === 200) {
-//             Toastify.success("Password update successful")
-//             return data.data
-//         }
-//     } catch (err) {
-//         Toastify.error(err.response.data.message || "'Something went wrong. Please try again later.'")
-//         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-//     }
-// }
-// )
-
-
-
-
-// export const getDashboardData = createAsyncThunk('getDashboardData', async (body, { rejectWithValue, dispatch }) => {
-//     try {
-//         const { data, status } = await api.getDashboardData();
-
-//         if (status === 200) {
-
-//             return data.data
-//         }
-//     } catch (err) {
-//         Toastify.error(err.response.data.message || "'Something went wrong. Please try again later.'")
-//         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-//     }
-// }
-// )
-
-
-// export const getGraphData = createAsyncThunk('getGraphData', async (body, { rejectWithValue, dispatch }) => {
-//     try {
-//         const { data, status } = await api.getGraphData(body);
-
-//         if (status === 200) {
-
-//             return data.data
-//         }
-//     } catch (err) {
-//         Toastify.error(err.response.data.message || "'Something went wrong. Please try again later.'")
-//         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-//     }
-// }
-// )
-
-
+};
 
 const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setLogin: (state, action) => {
-            state.isLoggedIn = true
-            state.user = action.payload
+        setEmailData: (state, action) => {
+            state.emailData = action.payload;
         },
-        // setTwoFA: (state, action) => {
-        //     state.user["2FA"] = action.payload
-        // },
-        setLogOut: (state, action) => {
-            state.isLoggedIn = false
-            state.user = {}
-            state.token = ""
-        },
-        setLoginData: (state, action) => {
-            state.data = action.payload
-        },
-        setToken: (state, action) => {
-            state.token = action.payload
+        logout: (state) => {
+            state.user = null;
+            state.token = null;
         },
         setUserData: (state, action) => {
-            state.user = action.payload
-        },
-        setVerifyObject: (state, action) => {
-            state.verifyObject = action.payload
+            state.user = action.payload;
         }
     },
-    
-})
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginUser.pending, (state) => {
+                state.logLoading = true;
+                state.logError = null;
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.logLoading = false;
+                state.logError = null;
+                state.user = action.payload?.employee || null;
+                state.token = action.payload?.token || null;
+            })
+            .addCase(loginUser.rejected, (state, action) => {
+                state.logLoading = false;
+                state.logError = action.payload?.message || "Something went wrong!";
+            })
+    }
+});
 
-export const { setLogin, setTwoFA, setLogOut, setLoginData, setToken, setUserData, setVerifyObject } = userSlice.actions
-
-export default userSlice.reducer
+export const { setEmailData, logout } = userSlice.actions;
+export default userSlice.reducer;

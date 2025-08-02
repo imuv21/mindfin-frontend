@@ -114,7 +114,7 @@ console.log(employee,"employee");
     const fetchAttendence = async () => {
         setAttentenceLoading(true)
         try {
-            const { data, status } = await api.getEmployeeCumulativeAttenedence(id)
+            const { data, status } = await api.getEmployeeCumulativeAttendance(id)
 
             // console.log(data,"attentence");
 
@@ -160,7 +160,6 @@ console.log(employee,"employee");
         fetchEmployee()
         fetchAttendence()
         fetchLeave()
-
     }, [id])
 
 

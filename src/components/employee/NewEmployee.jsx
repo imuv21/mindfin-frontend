@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import {
   User, Briefcase, FileText, Key, Upload, Calendar, Camera, Plus, Pencil,
@@ -80,7 +81,7 @@ export default function NewEmployee() {
     gender: yup.string().required('Gender is required').oneOf(['MALE', 'FEMALE', 'OTHER'], 'Invalid gender'),
     nationality: yup.string().required('Nationality is required'),
     familyMember: yup.string().required('familyMember is required'),
-    bloodgroup: yup.string().required('Blood group is required'),
+    bloodGroup: yup.string().required('Blood group is required'),
     emergencyNumber: yup.string().required('energency contact number is required'),
     aadharNumber: yup.string().required('aadhar number is required'),
     address: yup.string().required('Address is required'),
@@ -102,7 +103,7 @@ export default function NewEmployee() {
     salary: yup.number().required('salary is required'),
     salaryStartDate: yup.date().nullable(),
     salaryEndDate: yup.date().nullable(),
-    attendenceLoacation: yup.string().required('Location is required'),
+    attendanceLocation: yup.string().required('Location is required'),
     bankName: yup.string().required('Bank name is required'),
     bankBranchName: yup.string().required('Bank branch name is required'),
     accountName: yup.string().required('Account name is required'),
@@ -145,7 +146,7 @@ export default function NewEmployee() {
       emergencyNumber: '',
       aadharNumber: '',
       familyMember: '',
-      bloodgroup: '',
+      bloodGroup: '',
       address: '',
       state: '',
       city: '',
@@ -172,7 +173,7 @@ export default function NewEmployee() {
       IFSC: '',
       SWIFT: '',
       IBAN: '',
-      attendenceLoacation: '',
+      attendanceLocation: '',
       bioMetricIp: '',
       appointmentLetter: [],
       salarySlip: [],
@@ -314,12 +315,12 @@ export default function NewEmployee() {
       personal: [
         'firstName', 'lastName', 'phone', 'email', 'profileImg', 'DOB',
         'maritalStatus', 'gender', 'nationality', 'familyMember',
-        'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode', "bloodgroup"
+        'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode', "bloodGroup"
       ],
       professional: [
         'employeeId', 'userName', 'employeeType', 'professionalEmail', 'branch',
         'designation', 'workingDays', 'workingHours', 'dateOfJoin', 'dateOfLeave',
-        'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendenceLoacation',
+        'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendanceLocation',
         'bankName', 'bankBranchName', 'accountName', 'accountNo', 'IFSC', 'SWIFT',
         'IBAN', 'bioMetricIp', 'jobType'
 
@@ -406,12 +407,12 @@ export default function NewEmployee() {
     personal: [
       'firstName', 'lastName', 'phone', 'email', 'profileImg', 'DOB',
       'maritalStatus', 'gender', 'nationality', 'familyMember',
-      'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode', "bloodgroup"
+      'emergencyNumber', 'aadharNumber', 'address', 'state', 'city', 'zipCode', "bloodGroup"
     ],
     professional: [
       'employeeId', 'userName', 'employeeType', 'professionalEmail', 'branch',
       'designation', 'workingDays', 'workingHours', 'dateOfJoin', 'dateOfLeave',
-      'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendenceLoacation',
+      'officeLocation', 'salary', 'salaryStartDate', 'salaryEndDate', 'attendanceLocation',
       'bankName', 'bankBranchName', 'accountName', 'accountNo', 'IFSC', 'SWIFT',
       'IBAN', 'bioMetricIp', 'jobType'
     ],
@@ -759,8 +760,8 @@ export default function NewEmployee() {
                 <div>
                   <select
                     className="w-full p-2 pl-4 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-[#A3A3A3]"
-                    name="bloodgroup"
-                    value={values.bloodgroup}
+                    name="bloodGroup"
+                    value={values.bloodGroup}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   >
@@ -775,8 +776,8 @@ export default function NewEmployee() {
                     <option value="O-">O-</option>
                   </select>
 
-                  {errors.bloodgroup && touched.bloodgroup && (
-                    <div className="text-red-500 text-sm">{errors.bloodgroup}</div>
+                  {errors.bloodGroup && touched.bloodGroup && (
+                    <div className="text-red-500 text-sm">{errors.bloodGroup}</div>
                   )}
                 </div>
 
@@ -984,7 +985,7 @@ export default function NewEmployee() {
                       onBlur={handleBlur}
                     >
                       <option value="">Select Employee Type</option>
-                      <option value="PERMENENT">Full-time</option>
+                      <option value="PERMANENT">Full-time</option>
                       <option value="TEMPORARARY">Part-time</option>
                       <option value="INTERN">Intern</option>
                       <option value="NOTICEPERIOD">Notice Period</option>
@@ -1344,8 +1345,8 @@ export default function NewEmployee() {
                   <div>
                     <select
                       className="w-full p-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white  text-[#A3A3A3]"
-                      name="attendenceLoacation"
-                      value={values.attendenceLoacation}
+                      name="attendanceLocation"
+                      value={values.attendanceLocation}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     >
@@ -1355,8 +1356,8 @@ export default function NewEmployee() {
                       <option value="Remote">Remote</option>
                       <option value="Hybrid">Hybrid</option>
                     </select>
-                    {errors.attendenceLoacation && touched.attendenceLoacation && (
-                      <div className="text-red-500 text-sm mt-1">{errors.attendenceLoacation}</div>
+                    {errors.attendanceLocation && touched.attendanceLocation && (
+                      <div className="text-red-500 text-sm mt-1">{errors.attendanceLocation}</div>
                     )}
                   </div>
 
@@ -1533,8 +1534,8 @@ export default function NewEmployee() {
               {inviteMessage && (
                 <div
                   className={`text-sm mt-2 p-2 rounded ${inviteType === 'success'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-700'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700'
                     }`}
                 >
                   {inviteMessage}
@@ -1556,7 +1557,12 @@ export default function NewEmployee() {
               <button className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50" onClick={handleCancel}>
                 Cancel
               </button>
-              <button className="px-4 py-2 bg-[#2563EB] text-white rounded hover:bg-blue-600" onClick={handleNext}>
+              <button
+                type="button"
+                className="px-4 py-2 bg-[#2563EB] text-white rounded hover:bg-blue-600"
+                onClick={handleSubmit}
+                disabled={isEmployeeAddLoading}
+              >
 
                 {isEmployeeAddLoading ? <CircularProgress color='white' /> : `Create employee`}
 
@@ -1569,7 +1575,6 @@ export default function NewEmployee() {
     </MainLayout>
   );
 }
-
 
 
 

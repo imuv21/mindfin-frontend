@@ -117,7 +117,7 @@
 }
 
 .input option[value=""] {
-  color: #9ca3af;
+    color: #9ca3af;
 }
 
 .input:focus {
@@ -155,6 +155,57 @@
 .submitButton:hover {
     background-color: #2563eb;
 }
+
+
+
+/* not found  */
+
+.notfoundContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #f9f9f9;
+    padding: 2rem;
+}
+
+.notfoundTitle {
+    font-size: 6rem;
+    font-weight: 700;
+    color: #ff4c4c;
+    margin: 0;
+}
+
+.notfoundSubtitle {
+    font-size: 2rem;
+    font-weight: 500;
+    color: #333;
+    margin: 1rem 0 0.5rem;
+}
+
+.notfoundMessage {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+}
+
+.notfoundHomeLink {
+    text-decoration: none;
+    color: white;
+    background-color: #007bff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.notfoundHomeLink:hover {
+    background-color: #0056b3;
+}
+
 
 
 
