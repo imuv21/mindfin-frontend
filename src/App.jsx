@@ -40,7 +40,14 @@ import ViewLeadData from "./DataEntry/ViewLeadData";
 import EditLeadForm from "./DataEntry/EditLeadForm";
 import UploadDocumnet from "./DataEntry/UploadDocumnet";
 import LeadDataList from "./DataEntry/LeadDataList";
+
+import AdminDashboard from "./AdminModule/AdminDashboard";
+import AdminUploadLeadList from "./AdminModule/AdminUploadLead";
 import AdminLeadDataList from "./AdminModule/AdminLeadDataList";
+import AdminViewLeadList from "./AdminModule/AdminViewLeadData";
+import AdminEditLeadList from "./AdminModule/AdminEditLeadForm";
+import AdminDuplicateLeadList from "./AdminModule/DuplicateModal";
+
 
 import NotFound from "./pages/NotFound";
 
@@ -102,7 +109,16 @@ const App = () => {
           <Route path="/viewLeadData/:id" element={<ViewLeadData />} />
           <Route path="/editLeadForm/:id" element={<EditLeadForm />} />
           <Route path="/uploadDocument" element={<UploadDocumnet />} />
+
+
+          <Route path="/adminDashboard" element={<AdminDashboard />} />
+          <Route path="/adminUploadDataList" element={<AdminUploadLeadList />} />
           <Route path="/adminLeadDataList" element={<AdminLeadDataList />} />
+          <Route path="/adminViewDataList" element={<AdminViewLeadList />} />
+          <Route path="/adminEditDataList" element={<AdminEditLeadList />} />
+          <Route path="/adminDuplicateDataList" element={<AdminDuplicateLeadList />} />
+
+
         </Route>
 
         {/* Redirect all unknown paths */}
