@@ -16,7 +16,7 @@ const MyProfile = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const { user } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
   console.log(user, "profileUser");
 
   const handleImageUpload = async ({

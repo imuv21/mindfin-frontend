@@ -41,6 +41,7 @@ import EditLeadForm from "./DataEntry/EditLeadForm";
 import UploadDocumnet from "./DataEntry/UploadDocumnet";
 import LeadDataList from "./DataEntry/LeadDataList";
 
+// Admin
 import AdminDashboard from "./AdminModule/AdminDashboard";
 import AdminUploadLeadList from "./AdminModule/AdminUploadLead";
 import AdminLeadDataList from "./AdminModule/AdminLeadDataList";
@@ -49,6 +50,13 @@ import AdminEditLeadList from "./AdminModule/AdminEditLeadForm";
 import AdminDuplicateLeadList from "./AdminModule/DuplicateModal";
 
 
+// Telecaller
+import TelecallerOverview from "./Telecaller/Overview";
+import TelecallerLeadsData from "./Telecaller/LeadsData";
+import ViewLeadDetails from "./Telecaller/ViewLeadDetails";
+
+
+// Not found
 import NotFound from "./pages/NotFound";
 
 
@@ -59,9 +67,7 @@ const App = () => {
   return (
 
     <Router>
-
       <ToastContainer position="top-right" autoClose={2000} theme='dark' style={{ width: "350px" }} />
-
       <Routes>
 
         {/* Redirect root path */}
@@ -81,7 +87,10 @@ const App = () => {
 
         {/* Private routes - require authentication */}
         <Route element={<Protector isPrivate user={user} redirectTo="/login" />}>
+
           <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* hr & data entry routes */}
           <Route path="/newEmployee" element={<NewEmployee />} />
           <Route path="/allEmployee" element={<AllEmployee />} />
           <Route path="/viewEmployee/:id" element={<ViewEmployee />} />
@@ -110,7 +119,7 @@ const App = () => {
           <Route path="/editLeadForm/:id" element={<EditLeadForm />} />
           <Route path="/uploadDocument" element={<UploadDocumnet />} />
 
-
+          {/* Admin */}
           <Route path="/adminDashboard" element={<AdminDashboard />} />
           <Route path="/adminUploadDataList" element={<AdminUploadLeadList />} />
           <Route path="/adminLeadDataList" element={<AdminLeadDataList />} />
@@ -118,14 +127,16 @@ const App = () => {
           <Route path="/adminEditDataList" element={<AdminEditLeadList />} />
           <Route path="/adminDuplicateDataList" element={<AdminDuplicateLeadList />} />
 
+          {/* Telecaller */}
+          <Route path="/telecaller-overview" element={<TelecallerOverview />} />
+          <Route path="/telecaller-leads-data" element={<TelecallerLeadsData />} />
+          <Route path="/telecaller-view-lead-details" element={<ViewLeadDetails />} />
 
         </Route>
 
         {/* Redirect all unknown paths */}
         <Route path="*" element={<NotFound />} />
-
       </Routes>
-
     </Router>
   );
 };

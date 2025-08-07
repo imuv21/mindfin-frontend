@@ -1,0 +1,984 @@
+/* telecaller styling */
+
+:root {
+    --font: "Roboto", "Helvetica", "Arial", sans-serif;
+    --infont: 13px;
+    --focusColor: #007bff;
+    --brColor: #D9D9D9;
+    --gray: #818181;
+    --textColor: #363636;
+    --border: 1px solid var(--brColor);
+    --br: 8px;
+    --telePad: 6px 12px;
+}
+
+* {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    text-decoration: none;
+    border: none;
+}
+
+.outline1 {
+    outline: 1px solid red;
+}
+
+.outline2 {
+    outline: 1px solid blue;
+}
+
+.outline3 {
+    outline: 1px solid green;
+}
+
+.outline4 {
+    outline: 1px solid hotpink;
+}
+
+.border {
+    border: var(--border);
+    border-radius: var(--br);
+}
+
+.teleSupHeading {
+    font-family: var(--font);
+    font-weight: 500;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0px;
+    color: var(--focusColor);
+}
+
+.teleHeading {
+    font-family: var(--font);
+    font-weight: 500;
+    font-style: medium;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: var(--textColor);
+}
+
+.teleSubHeading {
+    font-family: var(--font);
+    font-weight: 600;
+    font-style: medium;
+    font-size: 14px;
+    line-height: 26.19px;
+    letter-spacing: 0px;
+    color: var(--textColor);
+}
+
+.teleText {
+    font-family: var(--font);
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 14px;
+    line-height: 22.16px;
+    letter-spacing: 0px;
+    color: var(--gray);
+}
+
+.teleBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--infont);
+    gap: 5px;
+    padding: 6px 15px;
+    border-radius: var(--br);
+    cursor: pointer;
+    background-color: var(--focusColor);
+    color: white;
+    border: none;
+}
+
+.teleBtn .MuiSvgIcon-root {
+    width: 13px;
+    height: 13px;
+    margin-bottom: 3px;
+}
+
+/* page conts */
+
+.teleCont {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: row;
+    padding: calc(0.25rem * 4);
+    gap: calc(0.40rem * 4);
+}
+
+.leadsTableCont {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    font-family: var(--font);
+    padding: calc(0.25rem * 4);
+    gap: 20px;
+}
+
+.viewLeadsCont {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    font-family: var(--font);
+    gap: 20px;
+}
+
+/* overview page */
+
+.ltaGraph {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: calc(0.25rem * 4);
+}
+
+.dlpGraph {
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: calc(0.25rem * 4);
+    position: relative;
+}
+
+.teleContHead {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    padding-bottom: 10px;
+    border-bottom: var(--border);
+}
+
+.bigSelect {
+    padding: 10px 30px 10px 16px;
+}
+
+.styledSelect {
+    border: var(--border);
+    border-radius: var(--br);
+    font-size: var(--infont);
+    font-family: var(--font);
+    padding: 6px 26px 6px 12px;
+    color: var(--textColor);
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%200L5%204L9%200%22%20stroke%3D%22%23666%22%20stroke-width%3D%221.5%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.styledSelect:hover {
+    border-color: var(--gray);
+}
+
+.styledSelect:focus {
+    border-color: var(--focusColor);
+}
+
+.pieTotalCenter {
+    position: absolute;
+    top: 180px;
+    transform: translateY(-50%);
+    text-align: center;
+    font-family: var(--font);
+    z-index: -1 !important;
+}
+
+.pieTotalCenter .label {
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.pieTotalCenter .value {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.leadTableWrapper {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.leadTable {
+    width: 100%;
+    font-size: 14px;
+    font-family: var(--font);
+}
+
+.leadTable thead tr {
+    text-align: left;
+    color: var(--gray);
+}
+
+.leadTable thead th {
+    padding-bottom: 8px;
+}
+
+.leadTable tbody td {
+    padding: 6px 0px;
+}
+
+.leadStatusCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+/* leads data page */
+
+.teleTabs {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+}
+
+.teleTabs button {
+    position: relative;
+    padding: 8px 0px;
+    background: none;
+    border: none;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--textColor);
+    cursor: pointer;
+    transition: color 0.25s ease, border-bottom-color 0.25s ease;
+}
+
+.teleTabs button.teleActiveTab {
+    color: var(--focusColor);
+    padding-bottom: 6px;
+}
+
+.teleTabs button {
+    padding-bottom: 6px;
+}
+
+.teleTabs button::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--focusColor);
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.teleTabs button.teleActiveTab::after {
+    left: 0;
+    width: 100%;
+}
+
+.filterAndActions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.teleFilterWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-right: 12px;
+}
+
+.teleFilterBtn {
+    padding: var(--telePad);
+    border: var(--border);
+    border-radius: var(--br);
+    font-size: var(--infont);
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+.searchAndActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.teleSearchWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 200px;
+}
+
+.teleSearchWrapper .MuiSvgIcon-root {
+    position: absolute;
+    left: 10px;
+    color: var(--brColor);
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.teleSearchInput {
+    padding: 6px 12px 6px 34px;
+    border: var(--border);
+    border-radius: var(--br);
+    font-size: var(--infont);
+    width: 100%;
+}
+
+.teleSearchInput::placeholder {
+    color: var(--brColor);
+}
+
+.leadsTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.leadsTable th,
+.leadsTable td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: var(--border);
+}
+
+.actionIcons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.actionIcons .MuiSvgIcon-root {
+    width: 15px;
+    height: 20px;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+/* status & assign btn */
+
+.assignButton {
+    background-color: #e1ecff;
+    color: #007bff;
+    border: none;
+    border-radius: var(--br);
+    padding: 2.5px 12px;
+    font-size: var(--infont);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.assignButton:hover {
+    background-color: #d0e0ff;
+}
+
+.statusTag {
+    padding: var(--telePad);
+    border-radius: var(--br);
+    font-size: var(--infont);
+    font-weight: 500;
+}
+
+.status-process {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-eligible {
+    background-color: #e1ecff;
+    color: #0056d2;
+}
+
+.status-rnr {
+    background-color: #d4f8df;
+    color: #237a3f;
+}
+
+.status-rejected {
+    background-color: #ffe0e0;
+    color: #c41c1c;
+}
+
+.telePaginationRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.teleShowMore {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+
+/* checkbox */
+
+.teleCustomCheckbox {
+    display: inline-block;
+    position: relative;
+    padding-left: 24px;
+    cursor: pointer;
+    font-size: var(--infont);
+    user-select: none;
+}
+
+.teleCustomCheckbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.teleCheckmark {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 16px;
+    width: 16px;
+    background-color: white;
+    border: var(--border);
+    border-radius: 4px;
+    transform: translateY(-50%);
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.teleCustomCheckbox input:checked~.teleCheckmark {
+    background-color: var(--focusColor);
+    border-color: var(--focusColor);
+}
+
+.teleCheckmark::after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 1px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0px 2px 2px 0px;
+    transform: rotate(45deg);
+}
+
+.teleCustomCheckbox input:checked~.teleCheckmark::after {
+    display: block;
+}
+
+/* pagination */
+
+.telePagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.telePageBtn {
+    padding: var(--telePad);
+    border-radius: var(--br);
+    border: var(--border);
+    background-color: white;
+    color: #7c8ba1;
+    font-size: 14px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 36px;
+}
+
+.telePageBtn:hover {
+    background-color: #f0f0f0;
+}
+
+.telePageActive {
+    color: var(--focusColor);
+    font-weight: 600;
+    border-color: var(--focusColor);
+}
+
+/* File Preview Modal */
+
+.filePreviewModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px 20px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modalHeader h3 {
+    margin: 0px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 1.5rem;
+}
+
+.uploadedList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.fileCard {
+    display: flex;
+    align-items: center;
+    background-color: #f2f7ff;
+    padding: 12px 16px;
+    border-radius: 12px;
+    gap: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.fileIcon {
+    background-color: white;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.fileDetails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.fileName {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.fileSize {
+    font-size: 12px;
+    color: #888;
+}
+
+.fileActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fileActions .MuiSvgIcon-root {
+    font-size: 18px;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+.fullBtn {
+    width: 100%;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px;
+    background-color: #0056d2;
+}
+
+/* Credit Manager Assignment Modal */
+.assignModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.assignModal .modalContent {
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.assignModal .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.assignModal .modalHeader h3 {
+    margin: 0px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.assignModal .modalBody {
+    margin-bottom: 20px;
+}
+
+.assignModal .modalBody p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.managerList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.managerOption {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.managerOption:hover {
+    background-color: #f5f7fa;
+    border-color: #c2d5ee;
+}
+
+.managerOption.selected {
+    background-color: #e1ecff;
+    border-color: #007bff;
+}
+
+.managerIcon {
+    margin-right: 12px;
+    color: #007bff;
+}
+
+.managerIcon .MuiSvgIcon-root {
+    width: 20px;
+    height: 20px;
+}
+
+.managerName {
+    font-weight: 500;
+    color: #333;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* view lead details styling */
+
+.topRow {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border: var(--border);
+    border-radius: var(--br);
+}
+
+.leadCard {
+    flex: 2;
+}
+
+.docsCard {
+    flex: 1;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 12px;
+    column-gap: 24px;
+    margin-top: 16px;
+}
+
+.field .teleSubHeading {
+    margin-bottom: 4px;
+}
+
+.docList {
+    list-style: none;
+    padding: 0px;
+    margin: 16px 0px 0px 0px;
+}
+
+.docItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: var(--border);
+    border-radius: var(--br);
+    padding: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.docName {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.docName .MuiSvgIcon-root {
+    font-size: 30px;
+    color: var(--focusColor);
+}
+
+.docActions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.docActions .MuiSvgIcon-root {
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 8px;
+    color: var(--gray);
+}
+
+/* --- Page header --- */
+.pageHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.headerLeft {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.bcItem.active {
+    color: var(--textColor);
+    font-weight: 500;
+}
+
+.bcSeparator {
+    margin: 0px 8px;
+}
+
+.backBtn {
+    padding: 6px 25px;
+    font-size: var(--infont);
+    border: var(--border);
+    border-radius: var(--br);
+    background: white;
+    color: var(--focusColor);
+    cursor: pointer;
+}
+
+/* add lead history styling */
+
+.historyCard {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.historyHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leadForm {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.formGroup {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.formGroup input,
+.formGroup select {
+    width: 100%;
+    border: var(--border);
+    border-radius: var(--br);
+    padding: 10px 26px 10px 15px;
+    font-family: var(--font);
+    font-size: var(--infont);
+    color: var(--textColor);
+}
+
+.formGroup select {
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%200L5%204L9%200%22%20stroke%3D%22%23666%22%20stroke-width%3D%221.5%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 10px;
+}
+
+.formActions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.teleBtn.outline {
+    background-color: white;
+    color: var(--textColor);
+}
+
+.statusBadge {
+    padding: var(--telePad);
+    font-size: var(--infont);
+    border-radius: var(--br);
+    font-weight: 500;
+}
+
+.leadHistoryScrollable {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.historyItem {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-bottom: var(--border);
+    padding-bottom: 10px;
+    gap: 3px;
+}
+
+.historyItem p {
+    font-size: 14px;
+    color: var(--textColor);
+    font-family: var(--font);
+}

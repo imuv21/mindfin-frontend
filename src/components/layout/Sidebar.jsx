@@ -18,106 +18,58 @@ import { getProfile } from "../../redux/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBranches, getAllDesignations } from "../../redux/employeeSlice.js";
 
-const navItems = [
-  {
-    icon: LayoutDashboard,
-    label: "Dashboard",
-    href: "/dashboard",
-    matchPaths: ["/dashboard"],
+const navItemsByDesignation = {
+  HR: [
+    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", matchPaths: ["/dashboard"] },
+    { icon: Users, label: "All Employees", href: "/allEmployee", matchPaths: ["/allEmployee", "/newEmployee", "/viewEmployee", "/editEmployee"] },
+    { icon: Workflow, label: "All Department", href: "/allDesignations", matchPaths: ["/allDesignations", "/allDepartments"] },
+    { icon: Clock, label: "Attendance", href: "/allAttendance", matchPaths: ["/allAttendance", "/monthlyAttendance"] },
+    { icon: Banknote, label: "Payroll", href: "/employeesSalary", matchPaths: ["/allPayroll", "/salaryDefnition", "/employeesSalary"] },
+    { icon: Briefcase, label: "Jobs", href: "/allJobs", matchPaths: ["/allJobs"] },
+    { icon: UserPlus, label: "Candidates", href: "/allCandidates", matchPaths: ["/allCandidates"] },
+    { icon: CalendarDays, label: "Leaves", href: "/allEmployeeLeaves", matchPaths: ["/allEmployeeLeaves"] },
+    { icon: CalendarClock, label: "Holidays", href: "/allHolidayLists", matchPaths: ["/allHolidayLists"] },
+    { icon: Settings, label: "Settings", href: "/myProfile", matchPaths: ["/myProfile"] }
+  ],
+  ADMIN: [], // same as HR 
+  SUPERADMIN: [], // same as HR
+  TELECALLER: [
+    { icon: LayoutDashboard, label: "Overview", href: "/telecaller-overview", matchPaths: ["/telecaller-overview"] },
+    { icon: Users, label: "Leads Data", href: "/telecaller-leads-data", matchPaths: ["/telecaller-leads-data", "/telecaller-view-lead-details"] },
+    { icon: Settings, label: "Notifications", href: "/notifications", matchPaths: ["/notifications"] }
+  ],
+  BRANCHMANAGER: [
+    { icon: LayoutDashboard, label: "Branch Overview", href: "/branchDashboard", matchPaths: ["/branchDashboard"] },
+    { icon: Users, label: "Team", href: "/branchTeam", matchPaths: ["/branchTeam"] }
+  ],
+  CREDITMANAGER: [
+    { icon: LayoutDashboard, label: "Credit Dashboard", href: "/creditDashboard", matchPaths: ["/creditDashboard"] },
+    { icon: Users, label: "Pending Loans", href: "/pendingLoans", matchPaths: ["/pendingLoans"] }
+  ]
+};
 
-  },
-  {
-    icon: Users,
-    label: "All Employees",
-    href: "/allEmployee",
-    matchPaths: ["/allEmployee", "/newEmployee","/viewEmployee","/editEmployee"],
+navItemsByDesignation.ADMIN = navItemsByDesignation.HR;
+navItemsByDesignation.SUPERADMIN = navItemsByDesignation.HR;
 
-  },
-  {
-    icon: Workflow,
-    label: "All Department",
-    href: "/allDesignations",
-    matchPaths: ["/allDesignations", "/allDepartments"],
-
-  },
-  {
-    icon: Clock,
-    label: "Attendance",
-    href: "/allAttendance",
-    matchPaths: ["/allAttendance", "/monthlyAttendance"],
-
-  },
-  {
-    icon: Banknote,
-    label: "Payroll",
-    href: "/employeesSalary",
-    matchPaths: ["/allPayroll","/salaryDefnition","/employeesSalary"],
-
-
-  },
-  {
-    icon: Briefcase,
-    label: "Jobs",
-    href: "/allJobs",
-    matchPaths: ["/allJobs"],
-
-
-  },
-  {
-    icon: UserPlus,
-    label: "Candidates",
-    href: "/allCandidates",
-    matchPaths: ["/allCandidates"],
-
-  },
-  {
-    icon: CalendarDays,
-    label: "Leaves",
-    href: "/allEmployeeLeaves",
-    matchPaths: ["/allEmployeeLeaves"],
-
-  },
-  {
-    icon: CalendarClock,
-    label: "Holidays",
-    href: "/allHolidayLists",
-    matchPaths: ["/allHolidayLists"],
-
-  },
-  {
-    icon: Settings,
-    label: "Settings",
-    href: "/myProfile",
-    matchPaths: ["/myProfile"],
-
-  },
-];
 
 const Sidebar = () => {
+
   const dispatch = useDispatch();
   const location = useLocation();
   const currentPath = location.pathname;
 
   const isPathMatch = (matchPaths, currentPath) => {
-
-    // console.log(matchPaths,currentPath,"paths");
-    
     return matchPaths.some((path) => currentPath.startsWith(path));
   };
 
-  // console.log(location,"loaction");
-  
-
-
   useEffect(() => {
     dispatch(getProfile());
-    dispatch(getAllDesignations())
-    dispatch(getAllBranches())
+    dispatch(getAllDesignations());
+    dispatch(getAllBranches());
   }, []);
 
-  const user = useSelector((state) => state.user);
-
-  // console.log("user", user);
+  const user = useSelector((state) => state.user.user);
+  const role = user?.designation?.designation;
 
   return (
     <div className="flex flex-col h-full rounded-[20px] border-gray-200 bg-[#A2A1A80D] m-4">
@@ -126,24 +78,11 @@ const Sidebar = () => {
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
-        {navItems.map((item) => {
-          // const isActive =
-          //   item.matchPaths
-          //     ? item.matchPaths.includes(location.pathname)
-          //     : location.pathname === item.href;
-          const isActive = item.matchPaths.some((path) =>
-            location.pathname.startsWith(path)
-          );
-
+        {(navItemsByDesignation[role] || []).map((item) => {
           return (
-            <NavLink
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "flex items-center px-4 py-3 text-sm rounded-md",
-                isPathMatch(item.matchPaths, currentPath)
-                ? "bg-blue-50 text-blue-600 font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
+            <NavLink key={item.href} to={item.href}
+              className={cn("flex items-center px-4 py-3 text-sm rounded-md",
+                isPathMatch(item.matchPaths, currentPath) ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-700 hover:bg-gray-100"
               )}
             >
               <item.icon className="h-5 w-5 mr-3" />
@@ -153,7 +92,7 @@ const Sidebar = () => {
         })}
       </nav>
 
-   {/*    <div className="p-4 border-t border-gray-200">
+      {/*    <div className="p-4 border-t border-gray-200">
         <div className="flex items-center">
           <div className="h-8 w-8 rounded-full overflow-hidden">
             <img
