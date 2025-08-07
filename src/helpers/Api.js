@@ -236,7 +236,7 @@ class Api {
         return this.init().delete(`/hr/delete-leave/${body}`)
     }
 
-    AddLeave = (body) => {
+    addLeave = (body) => {
         return this.init().post('/hr/add-leave', body)
     }
 
