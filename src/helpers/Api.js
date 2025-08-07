@@ -68,12 +68,12 @@ class Api {
     verifyForgotPassword = (body) => {
         return this.init().post("/hr/verify-otp", body)
     }
-    // login = (body) => {
-    //     return this.init().post("/hr/login", body)
-    // }
-    loginEmployee = (body) => {
+    login = (body) => {
         return this.init().post("/hr/login", body)
     }
+    // loginEmployee = (body) => {
+    //     return this.init().post("/hr/login", body)
+    // }
     branchLogin = (body) => {
         return this.init().post("/hr/branch-login", body)
     }
