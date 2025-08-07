@@ -31,7 +31,11 @@ const navItemsByDesignation = {
     { icon: CalendarClock, label: "Holidays", href: "/allHolidayLists", matchPaths: ["/allHolidayLists"] },
     { icon: Settings, label: "Settings", href: "/myProfile", matchPaths: ["/myProfile"] }
   ],
-  ADMIN: [], // same as HR 
+  ADMIN: [
+    { icon: LayoutDashboard, label: "Admin Overview", href: "/adminDashboard", matchPaths: ["/adminDashboard"] },
+    { icon: LayoutDashboard, label: "Admin Leads", href: "/adminLeadDataList", matchPaths: ["/adminLeadDataList", "/adminUploadDataList", "/adminViewDataList", 
+      "/adminEditDataList", "/adminDuplicateDataList" ] },
+  ],
   SUPERADMIN: [], // same as HR
   TELECALLER: [
     { icon: LayoutDashboard, label: "Overview", href: "/telecaller-overview", matchPaths: ["/telecaller-overview"] },
@@ -48,7 +52,6 @@ const navItemsByDesignation = {
   ]
 };
 
-navItemsByDesignation.ADMIN = navItemsByDesignation.HR;
 navItemsByDesignation.SUPERADMIN = navItemsByDesignation.HR;
 
 

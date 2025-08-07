@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import ProfileHeader from '../AdminModule/layout/ProfileHeader';
-import MainLayout from './layout/MainLayout';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import RoleBreadcrumbs from './layout/RoleBreadcrumbs';
 import { useNavigate, useParams } from 'react-router-dom';
 import Toastify from '../helpers/Toastify';

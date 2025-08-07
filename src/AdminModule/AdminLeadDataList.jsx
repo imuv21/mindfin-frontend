@@ -5,8 +5,8 @@ import {
   TableHead, TableRow, Checkbox, IconButton, Typography
 } from '@mui/material';
 import { Edit, Delete, Visibility } from '@mui/icons-material';
-import MainLayout from '../AdminModule/layout/MainLayout';
-import ProfileHeader from '../AdminModule/layout/ProfileHeader';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import Filterbar from '../AdminModule/Components/Filterbar';
 import CustomPagination from '../AdminModule/Components/Pagination';
 import AssignTelecallerModal from '../AdminModule/AssignTeleModal';

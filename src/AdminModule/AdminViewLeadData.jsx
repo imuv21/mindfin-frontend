@@ -6,8 +6,8 @@ import {
     Typography,
     Divider,
 } from '@mui/material';
-import MainLayout from './layout/MainLayout';
-import ProfileHeader from '../AdminModule/layout/ProfileHeader';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import RoleBreadcrumbs from './layout/RoleBreadcrumbs';
 
 const ViewLeadData = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import * as XLSX from 'xlsx'
-import ProfileHeader from './layout/ProfileHeader'
-import MainLayout from './layout/MainLayout'
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import api from '../helpers/Api';
 import Toastify from '../helpers/Toastify';
 import DuplicateModal from '../AdminModule/DuplicateModal';

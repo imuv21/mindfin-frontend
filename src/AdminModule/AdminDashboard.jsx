@@ -75,8 +75,8 @@ import api from '../helpers/Api';
 import { Users } from 'lucide-react';
 import LeadsDataChart from "../AdminModule/Dashboard/LeadsDataChart";
 import TotalLeadsAssigned from "../AdminModule/Dashboard/TotalLeadsAssigned";
-import ProfileHeader from '../AdminModule/layout/ProfileHeader';
-import MainLayout from '../AdminModule/layout/MainLayout';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 
 const Dashboard = () => {
     const [leadCounts, setLeadCounts] = useState({
