@@ -61,7 +61,7 @@ const RoleBreadcrumbs = ({ name = "Brooklyn Simmons", breadcrumbs = [] }) => {
       {/* Right Side: Notification + Profile Box */}
       <Box display="flex" alignItems="center" gap={2}>
         <button className="px-6 py-2 text-gray-600 border bg-[#FFFFFF] border-[#97979733] rounded hover:bg-gray-50 cursor-pointer" 
-         onClick={()=>  navigate("/leadDataList")
+         onClick={()=>  navigate("/adminLeadDataList")
          }
         >
           Back

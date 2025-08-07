@@ -43,7 +43,7 @@ class Api {
         })
         return this.client;
     };
-    
+
 
     // login
     generatePassword = (body) => {
@@ -68,7 +68,10 @@ class Api {
     verifyForgotPassword = (body) => {
         return this.init().post("/hr/verify-otp", body)
     }
-    login = (body) => {
+    // login = (body) => {
+    //     return this.init().post("/hr/login", body)
+    // }
+    loginEmployee = (body) => {
         return this.init().post("/hr/login", body)
     }
     branchLogin = (body) => {
@@ -79,7 +82,7 @@ class Api {
     }
 
 
-     sendInvitationLink = (body) => {
+    sendInvitationLink = (body) => {
         return this.init().post("/hr/send-invite", body)
     }
 
@@ -217,7 +220,7 @@ class Api {
     }
 
     //leaves
-    addLeave = (body) => {
+    createLeave = (body) => {
         return this.init().post('/hr/create-leave', body)
     }
     getAllLeaves = (body) => {
@@ -231,6 +234,10 @@ class Api {
     }
     deleteALeave = (body) => {
         return this.init().delete(`/hr/delete-leave/${body}`)
+    }
+
+    AddLeave = (body) => {
+        return this.init().post('/hr/add-leave', body)
     }
 
 
@@ -320,6 +327,37 @@ class Api {
     exportLead = (body) => {
         return this.init().get(`/tele-caller/export-lead?${body}`)
     }
+
+
+
+
+
+    //admin
+    getAllTelecallers = () => {
+        return this.init().get(`/admin/get-all-telecallers`)
+    }
+
+    getMonthlyLeadCountsByDesignation = () => {
+        return this.init().get(`/admin/get-monthly-leads-data`) // 3 crads
+    }
+
+    // getMonthlyLeadCountsByDesignation = (branchId) => {
+    //     return this.init().get(`/admin/get-monthly-leads-data?branchId=${branchId}`);
+    // };
+
+    getBranchTelecallerLeadCounts = () => {
+        return this.init().get(`/admin/get-assined-info`)
+    }
+
+    getLeadCountsByMonthAndDesignation = () => {
+        return this.init().get(`/admin/get-leads-data`)
+    }
+
+    assignLeadToEmployee(data) {
+        return this.init().put(`/admin/assign-lead`, data);
+    }
+
+
 
 
     //upload-photo

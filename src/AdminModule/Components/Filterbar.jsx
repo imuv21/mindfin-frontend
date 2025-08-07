@@ -94,7 +94,7 @@ export default function Filterbar() {
     }, [filterOptions])
 
 
-    console.log(filterOptions, "oombi");
+
 
 
 
@@ -173,32 +173,38 @@ export default function Filterbar() {
                     size="small"
 
                 />
-                {/* <div className="w-px h-8 bg-[#979797]"></div> */}
-                {/* <FormControl variant="standard" sx={{ minWidth: 150 }}>
+                {<div className="w-px h-8 bg-[#ffffff]"></div>}
+                {<FormControl variant="standard" sx={{ minWidth: 100 }}>
                     <StyledSelect
                         displayEmpty
                         value={representative}
                         onChange={(e) => setRepresentative(e.target.value)}
                         renderValue={(selected) => selected || " Representative"}
+                        sx={{
+                            color: '#979797'
+                        }}
                     >
-                        <MenuItem value="" disabled> Representative</MenuItem>
+                        <MenuItem value="" disabled>Representatives</MenuItem>
                         <MenuItem value="Rep1">Rep 1</MenuItem>
                         <MenuItem value="Rep2">Rep 2</MenuItem>
                     </StyledSelect>
-                </FormControl> */}
-                <div className="w-px h-8 bg-[#979797]"></div>
-                {/* <FormControl variant="standard" sx={{ minWidth: 150 }}>
+                </FormControl>}
+                {/* <div className="w-px h-8 bg-[#ffffff]  text-[#979797]">kkdkd</div> */}
+                {<FormControl variant="standard" sx={{ minWidth: 100 }}>
                     <StyledSelect
                         displayEmpty
                         value={telecaller}
                         onChange={(e) => setTelecaller(e.target.value)}
                         label="Telecallers"
+                        sx={{
+                            color: '#979797'
+                        }}
                     >
-                        <MenuItem value="" disabled> Tele Caller</MenuItem>
+                        <MenuItem value="" disabled>Telecallers</MenuItem>
                         <MenuItem value="Caller1">Caller 1</MenuItem>
                         <MenuItem value="Caller2">Caller 2</MenuItem>
                     </StyledSelect>
-                </FormControl> */}
+                </FormControl>}
             </Box>
 
             {/* Right Buttons */}
@@ -232,16 +238,19 @@ export default function Filterbar() {
                 </button> */}
 
                 <button
-                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 text-sm font-medium cursor-pointer"
+                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 font-light cursor-pointer"
                     onClick={fetchData}
                     disabled={loading}
+                    style={{ fontSize: '16px' }}
                 >
                     {loading ? "Exporting..." : "Export"}
                 </button>
 
                 <button
                     type="button"
-                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 text-sm font-medium cursor-pointer"
+                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 font-light cursor-pointer"
+                    style={{ fontSize: '16px' }}
+
                     onClick={() => navigate("/adminUploadDataList")}                >
                     <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M16.25 11.25V14.25C16.25 14.6478 16.092 15.0294 15.8107 15.3107C15.5294 15.592 15.1478 15.75 14.75 15.75H4.25C3.85218 15.75 3.47064 15.592 3.18934 15.3107C2.90804 15.0294 2.75 14.6478 2.75 14.25V11.25" stroke="white" stroke-linecap="round" stroke-linejoin="round" />

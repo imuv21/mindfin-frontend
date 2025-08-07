@@ -32,7 +32,7 @@ const UploadDocumnet = () => {
                 console.log(jsonData, "jaisaa");
     
                 const res = await api.addLead(jsonData);
-                console.log(res.data, "myre data");
+               
     
                 if (res.status === 200) {
 
@@ -69,7 +69,7 @@ const UploadDocumnet = () => {
 
     return (
         <MainLayout>
-            <ProfileHeader name='Upload Lead Document' />
+            <ProfileHeader name='Admin' />
             <div className="container m-auto p-4">
                 {
                     open && 
