@@ -6,13 +6,9 @@ import {
     TextField,
     MenuItem,
     Select,
-    InputLabel,
     FormControl,
-    IconButton,
-    InputAdornment,
+    IconButton
 } from "@mui/material";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import { CalendarIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllLeadData, setFilterValues } from "../../redux/leadSlice";
@@ -21,19 +17,13 @@ import * as XLSX from 'xlsx';
 import { formatDate } from "../../helpers/conversion";
 import Toastify from "../../helpers/Toastify";
 
-
+// Styled Components
 const StyledTextField = styled(TextField)({
     fontSize: '14px',
     '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-            border: 'none',
-        },
-        '&:hover fieldset': {
-            border: 'none',
-        },
-        '&.Mui-focused fieldset': {
-            border: 'none',
-        },
+        '& fieldset': { border: 'none' },
+        '&:hover fieldset': { border: 'none' },
+        '&.Mui-focused fieldset': { border: 'none' },
         backgroundColor: '#fff',
         paddingRight: 0,
     },
@@ -43,224 +33,388 @@ const StyledSelect = styled(Select)(() => ({
     height: 44,
     lineHeight: '44px',
     fontSize: '14px',
-    '&::before, &::after': {
-        display: 'none',
-    },
-    '&:hover::before': {
-        borderBottom: 'none !important',
-    },
-    '&.Mui-focused::after': {
-        borderBottom: 'none !important',
-    },
     '& .MuiSelect-select': {
         padding: '6px 24px 6px 0',
-        border: 'none',
         backgroundColor: 'transparent',
     },
-    '& .MuiOutlinedInput-notchedOutline': {
-        border: 'none',
-    },
-    boxShadow: 'none',
+    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
     background: 'transparent',
 }));
 
-export default function Filterbar() {
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const { isRefresh, isLoading, filterOptions } = useSelector((state) => state.leads)
+export default function Filterbar({ onFiltersChange }) {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { filterOptions } = useSelector((state) => state.leads);
 
-    const [date, setDate] = useState(null);
+    const [date, setDate] = useState("");
     const [representative, setRepresentative] = useState("");
     const [telecaller, setTelecaller] = useState("");
-    const [search, setSearch] = useState('')
-    const [loading, setLoading] = useState(false)
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false);
 
+    const [telecallerList, setTelecallerList] = useState([]);
+    const [isTelecallerOpen, setIsTelecallerOpen] = useState(false);
 
+    // Debounce search to avoid too many API calls
+    const [searchDebounceTimer, setSearchDebounceTimer] = useState(null);
 
-    const handleSearch = (e) => {
-        setSearch(e.target.value);
-        dispatch(setFilterValues({ search: e.target.value, page: 1 }));
+    // Fetch telecallers
+    const fetchTelecallers = async () => {
+        try {
+            const { data, status } = await api.getAllTelecallers();
+            if (status === 200) setTelecallerList(data?.data || []);
+        } catch (error) {
+            console.error("Failed to fetch telecallers", error);
+            Toastify.error(error?.response?.data?.message || error.message || "Something went wrong");
+        }
     };
 
-    const handleDateChange = (e) => {
-        setDate(e.target.value)
-        dispatch(setFilterValues({ date: e.target.value, page: 1 }));
+    // Handle search change with debouncing
+    const handleSearch = (e) => {
+        const searchValue = e.target.value;
+        setSearch(searchValue);
 
-    }
+        // Clear previous timer
+        if (searchDebounceTimer) {
+            clearTimeout(searchDebounceTimer);
+        }
 
-
-    useEffect(() => {
-        dispatch(getAllLeadData(filterOptions))
-    }, [filterOptions])
-
-
-
-
-
-
-
-    const fetchData = async () => {
-        setLoading(true); // Start loading
-
-        try {
-
-            let query = `search=${search}&date=${date}`
-
-            const { data, status } = await api.exportLead(query)
-            console.log(data, "exp1");
-
-            if (status === 200) {
-                let lead = data?.data
-
-                const excelData = lead?.map((item) => ({
-                    leadName: item?.leadName || '_',
-                    phone: item?.phone || '_',
-                    alternativePhone: item?.alternativePhone || '_',
-                    email: item?.email || '_',
-                    location: item?.location || '_',
-                    loanType: item?.loanType || '_',
-                    loanAmount: item?.loanAmount || '_',
-                    LeadCreatedDate: formatDate(item?.LeadCreatedDate) || '_',
-                }));
-                const worksheet = XLSX.utils.json_to_sheet(excelData);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, 'Refunds');
-                XLSX.writeFile(workbook, `Lead.xlsx`);
-
-
-
+        // Set new timer for debounced search
+        const timer = setTimeout(() => {
+            // Call the parent component's filter handler
+            if (onFiltersChange) {
+                onFiltersChange({
+                    search: searchValue,
+                    date: date,
+                    representative: representative,
+                    telecaller: telecaller
+                });
             }
 
+            // Also update Redux if needed
+            dispatch(setFilterValues({
+                search: searchValue,
+                date: date,
+                representative: representative,
+                telecaller: telecaller,
+                page: 1
+            }));
+        }, 300); // 300ms debounce
 
+        setSearchDebounceTimer(timer);
+    };
 
+    // Handle date change
+    const handleDateChange = (e) => {
+        const dateValue = e.target.value;
+        setDate(dateValue);
 
+        if (onFiltersChange) {
+            onFiltersChange({
+                search: search,
+                date: dateValue,
+                representative: representative,
+                telecaller: telecaller
+            });
+        }
 
+        dispatch(setFilterValues({
+            search: search,
+            date: dateValue,
+            representative: representative,
+            telecaller: telecaller,
+            page: 1
+        }));
+    };
+
+    // Handle representative change
+    const handleRepresentativeChange = (e) => {
+        const repValue = e.target.value;
+        setRepresentative(repValue);
+
+        if (onFiltersChange) {
+            onFiltersChange({
+                search: search,
+                date: date,
+                representative: repValue,
+                telecaller: telecaller
+            });
+        }
+
+        dispatch(setFilterValues({
+            search: search,
+            date: date,
+            representative: repValue,
+            telecaller: telecaller,
+            page: 1
+        }));
+    };
+
+    // Handle telecaller change
+    const handleTelecallerChange = (e) => {
+        const telecallerValue = e.target.value;
+        setTelecaller(telecallerValue);
+
+        if (onFiltersChange) {
+            onFiltersChange({
+                search: search,
+                date: date,
+                representative: representative,
+                telecaller: telecallerValue
+            });
+        }
+
+        dispatch(setFilterValues({
+            search: search,
+            date: date,
+            representative: representative,
+            telecaller: telecallerValue,
+            page: 1
+        }));
+    };
+
+    // Clear all filters
+    const handleClearFilters = () => {
+        setSearch("");
+        setDate("");
+        setRepresentative("");
+        setTelecaller("");
+
+        if (onFiltersChange) {
+            onFiltersChange({
+                search: "",
+                date: "",
+                representative: "",
+                telecaller: ""
+            });
+        }
+
+        dispatch(setFilterValues({
+            search: "",
+            date: "",
+            representative: "",
+            telecaller: "",
+            page: 1
+        }));
+    };
+
+    // Export leads with current filters
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const query = new URLSearchParams({
+                search: search || '',
+                date: date || '',
+                representative: representative || '',
+                telecaller: telecaller || ''
+            }).toString();
+
+            const { data, status } = await api.exportLead(query);
+            if (status === 200) {
+                const lead = data?.data || [];
+                const excelData = lead.map((item) => ({
+                    'Lead Name': item?.leadName || '_',
+                    'Phone': item?.phone || '_',
+                    'Alternative Phone': item?.alternativePhone || '_',
+                    'Email': item?.email || '_',
+                    'Location': item?.location || '_',
+                    'Loan Type': item?.loanType?.loanName || '_',
+                    'Loan Amount': item?.loanAmount || '_',
+                    'Lead Created Date': formatDate(item?.LeadCreatedDate) || '_',
+                    'Assigned To': item?.assignedTo || '_',
+                    'Status': item?.status || '_'
+                }));
+
+                const worksheet = XLSX.utils.json_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Leads');
+
+                // Auto-size columns
+                const maxWidth = excelData.reduce((w, r) => Math.max(w, Object.keys(r).length), 10);
+                worksheet['!cols'] = Array(maxWidth).fill({ width: 15 });
+
+                XLSX.writeFile(workbook, `Leads_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+                Toastify.success("Data exported successfully!");
+            }
         } catch (error) {
-            console.log(error);
-            Toastify.error("Internal server issue")
-
-
+            console.error("Export error:", error);
+            Toastify.error(error?.response?.data?.message || "Export failed");
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false); // Start loading
+    };
 
-        }
-    }
-
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (searchDebounceTimer) {
+                clearTimeout(searchDebounceTimer);
+            }
+        };
+    }, [searchDebounceTimer]);
 
     return (
         <Box
             display="flex"
+            flexWrap="wrap"
             alignItems="center"
             justifyContent="space-between"
             bgcolor="#fff"
-            sx={{ borderRadius: '12px', padding: '10px' }}
+            sx={{
+                borderRadius: '12px',
+                p: 2,
+                gap: { xs: 1.5, sm: 2 },
+            }}
         >
-            {/* Left Filters */}
-            <Box display="flex" alignItems="center" gap={2}>
-                <IconButton>
-                    <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.75 6.55427C16.1348 6.55427 20.5 5.25909 20.5 3.66141C20.5 2.06373 16.1348 0.768555 10.75 0.768555C5.36522 0.768555 1 2.06373 1 3.66141C1 5.25909 5.36522 6.55427 10.75 6.55427Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M1 3.66113C1.0017 5.61509 2.40851 7.39635 4.66812 8.55616C6.73072 9.61485 8.5 11.4677 8.5 13.7861V13.7861C8.5 14.585 9.50736 15.2326 10.75 15.2326C11.9926 15.2326 13 14.585 13 13.7861V13.7861C13 11.4677 14.7693 9.61485 16.8319 8.55616C19.0915 7.39635 20.4983 5.61509 20.5 3.66113" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            {/* LEFT SIDE */}
+            <Box
+                display="flex"
+                flexWrap="wrap"
+                alignItems="center"
+                gap={{ xs: 1.5, sm: 2 }}
+                flex={1}
+                minWidth={250}
+            >
+                <IconButton onClick={handleClearFilters} title="Clear all filters" sx={{ p: 1 }}>
+                    <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
+                        <path
+                            d="M10.75 6.55C16.13 6.55 20.5 5.25 20.5 3.66C20.5 2.06 16.13 0.77 10.75 0.77C5.36 0.77 1 2.06 1 3.66C1 5.25 5.36 6.55 10.75 6.55Z"
+                            stroke="black"
+                            strokeWidth="1.5"
+                        />
+                        <path
+                            d="M1 3.66C1 5.61 2.4 7.4 4.67 8.56C6.73 9.61 8.5 11.47 8.5 13.79C8.5 14.59 9.51 15.23 10.75 15.23C11.99 15.23 13 14.59 13 13.79C13 11.47 14.77 9.61 16.83 8.56C19.09 7.4 20.5 5.61 20.5 3.66"
+                            stroke="black"
+                            strokeWidth="1.5"
+                        />
                     </svg>
-
                 </IconButton>
-                <div className="w-px h-8 bg-[#979797]"></div>
-                <StyledTextField sx={{ fontSize: '14px' }}
+
+                <StyledTextField
                     type="date"
                     value={date}
                     onChange={handleDateChange}
                     size="small"
-
+                    placeholder="Select Date"
+                    sx={{ minWidth: { xs: '100%', sm: 150 } }}
                 />
-                {<div className="w-px h-8 bg-[#ffffff]"></div>}
-                {<FormControl variant="standard" sx={{ minWidth: 100 }}>
+
+                {/* <FormControl variant="standard" sx={{ minWidth: { xs: '100%', sm: 140 } }}>
                     <StyledSelect
                         displayEmpty
                         value={representative}
-                        onChange={(e) => setRepresentative(e.target.value)}
-                        renderValue={(selected) => selected || " Representative"}
-                        sx={{
-                            color: '#979797'
-                        }}
+                        onChange={handleRepresentativeChange}
+                        renderValue={(selected) => selected || 'Representative'}
                     >
-                        <MenuItem value="" disabled>Representatives</MenuItem>
+                        <MenuItem value="" disabled>
+                            Representatives
+                        </MenuItem>
+                        <MenuItem value="">All Representatives</MenuItem>
                         <MenuItem value="Rep1">Rep 1</MenuItem>
                         <MenuItem value="Rep2">Rep 2</MenuItem>
                     </StyledSelect>
-                </FormControl>}
-                {/* <div className="w-px h-8 bg-[#ffffff]  text-[#979797]">kkdkd</div> */}
-                {<FormControl variant="standard" sx={{ minWidth: 100 }}>
+                </FormControl> */}
+
+                <FormControl variant="standard" sx={{ minWidth: { xs: '100%', sm: 140 } }}>
                     <StyledSelect
                         displayEmpty
                         value={telecaller}
-                        onChange={(e) => setTelecaller(e.target.value)}
-                        label="Telecallers"
-                        sx={{
-                            color: '#979797'
+                        onChange={handleTelecallerChange}
+                        onOpen={() => {
+                            if (!isTelecallerOpen) {
+                                setIsTelecallerOpen(true);
+                                fetchTelecallers();
+                            }
+                        }}
+                        renderValue={(selected) => {
+                            if (!selected) return 'Telecallers';
+                            const caller = telecallerList.find((c) => c._id === selected);
+                            return caller ? `${caller.firstName} ${caller.lastName}` : 'Telecallers';
                         }}
                     >
-                        <MenuItem value="" disabled>Telecallers</MenuItem>
-                        <MenuItem value="Caller1">Caller 1</MenuItem>
-                        <MenuItem value="Caller2">Caller 2</MenuItem>
+                        <MenuItem value="" disabled>
+                            Telecallers
+                        </MenuItem>
+                        <MenuItem value="">All Telecallers</MenuItem>
+                        {telecallerList.map((caller) => (
+                            <MenuItem key={caller._id} value={caller._id}>
+                                {caller.firstName} {caller.lastName}
+                            </MenuItem>
+                        ))}
                     </StyledSelect>
-                </FormControl>}
+                </FormControl>
             </Box>
 
-            {/* Right Buttons */}
-            <Box mt={{ xs: 2, md: 0 }} sx={{ display: "flex", gap: 1 }}>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg className="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                            />
-                        </svg>
-                    </div>
+            {/* RIGHT SIDE */}
+            <Box
+                display="flex"
+                flexWrap="wrap"
+                alignItems="center"
+                justifyContent="flex-end"
+                gap={{ xs: 1, sm: 1.5 }}
+                flexShrink={0}
+            >
+                {/* Search Box */}
+                <Box position="relative" sx={{ width: { xs: '100%', sm: 180 } }}>
                     <input
                         type="search"
-                        className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white"
+                        className="block w-full p-2 pl-9 text-sm border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Search"
-                        name="search"
                         value={search}
                         onChange={handleSearch}
                     />
-                </div>
-                {/* <button
-                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 text-sm font-medium cursor-pointer"
-                    onClick={()=>fetchData()}
-                >
-                    Export
-                </button> */}
+                    <svg
+                        className="absolute left-3 top-2.5 w-4 h-4 text-gray-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                    >
+                        <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                    </svg>
+                </Box>
 
-                <button
-                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 font-light cursor-pointer"
+                {/* Export Button */}
+                <Button
+                    variant="contained"
+                    sx={{
+                        textTransform: 'none',
+                        height: 40,
+                        bgcolor: '#2563EB',
+                        '&:hover': { bgcolor: '#1d4ed8' },
+                        '&:disabled': { bgcolor: '#9ca3af' },
+                        minWidth: { xs: '100%', sm: 'auto' },
+                    }}
                     onClick={fetchData}
                     disabled={loading}
-                    style={{ fontSize: '16px' }}
                 >
-                    {loading ? "Exporting..." : "Export"}
-                </button>
+                    {loading ? 'Exporting...' : 'Export'}
+                </Button>
 
-                <button
-                    type="button"
-                    className="flex items-center gap-2 text-white bg-[#2563EB] rounded-lg px-4 py-2 font-light cursor-pointer"
-                    style={{ fontSize: '16px' }}
-
-                    onClick={() => navigate("/adminUploadDataList")}                >
-                    <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16.25 11.25V14.25C16.25 14.6478 16.092 15.0294 15.8107 15.3107C15.5294 15.592 15.1478 15.75 14.75 15.75H4.25C3.85218 15.75 3.47064 15.592 3.18934 15.3107C2.90804 15.0294 2.75 14.6478 2.75 14.25V11.25" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M13.25 6L9.5 2.25L5.75 6" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M9.5 2.25V11.25" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-
-                    Upload Document
-                </button>
+                {/* Upload Button */}
+                <Button
+                    variant="contained"
+                    sx={{
+                        textTransform: 'none',
+                        height: 40,
+                        bgcolor: '#2563EB',
+                        '&:hover': { bgcolor: '#1d4ed8' },
+                        minWidth: { xs: '100%', sm: 'auto' },
+                    }}
+                    onClick={() => navigate('/adminUploadDataList')}
+                >
+                    Upload
+                </Button>
             </Box>
         </Box>
     );
+
 }
+
+
+

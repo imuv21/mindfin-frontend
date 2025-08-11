@@ -46,8 +46,12 @@ import AdminDashboard from "./AdminModule/AdminDashboard";
 import AdminUploadLeadList from "./AdminModule/AdminUploadLead";
 import AdminLeadDataList from "./AdminModule/AdminLeadDataList";
 import AdminViewLeadList from "./AdminModule/AdminViewLeadData";
-import AdminEditLeadList from "./AdminModule/AdminEditLeadForm";
+import AdminEditLeadForm from "./AdminModule/AdminEditLeadForm";
 import AdminDuplicateLeadList from "./AdminModule/DuplicateModal";
+import AdminDeleteLeadForm from "./AdminModule/AdminLeadDataList";
+
+//Credit Manager
+import CreditCibilScore from "./CreditManagerModule/CibilCreditScroe";
 
 
 // Telecaller
@@ -123,9 +127,16 @@ const App = () => {
           <Route path="/adminDashboard" element={<AdminDashboard />} />
           <Route path="/adminUploadDataList" element={<AdminUploadLeadList />} />
           <Route path="/adminLeadDataList" element={<AdminLeadDataList />} />
-          <Route path="/adminViewDataList" element={<AdminViewLeadList />} />
-          <Route path="/adminEditDataList" element={<AdminEditLeadList />} />
+          <Route path="/adminViewDataList/:id" element={<AdminViewLeadList />} />
+          <Route path="/adminEditDataList/:id" element={<AdminEditLeadForm />} />
+          <Route path="/adminDeleteDataList/:id" element={<AdminDeleteLeadForm />} />
           <Route path="/adminDuplicateDataList" element={<AdminDuplicateLeadList />} />
+
+          {/* Credit Manager */}
+          <Route path="/cibilCreditScore" element={<CreditCibilScore />} />
+
+
+
 
           {/* Telecaller */}
           <Route path="/telecaller-overview" element={<TelecallerOverview />} />
