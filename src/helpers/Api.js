@@ -338,12 +338,8 @@ class Api {
     }
 
     getMonthlyLeadCountsByDesignation = () => {
-        return this.init().get(`/admin/get-monthly-leads-data`) // 3 crads
+        return this.init().get(`/admin/get-monthly-leads-data`)
     }
-
-    // getMonthlyLeadCountsByDesignation = (branchId) => {
-    //     return this.init().get(`/admin/get-monthly-leads-data?branchId=${branchId}`);
-    // };
 
     getBranchTelecallerLeadCounts = () => {
         return this.init().get(`/admin/get-assined-info`)
@@ -357,6 +353,16 @@ class Api {
         return this.init().put(`/admin/assign-lead`, data);
     }
 
+    //loan type
+    getAllLoanTypes = () => {
+        return this.init().get(`/super-admin/get-all-loan-type`)
+    }
+
+    uploadTelecallerLeads = (formData) => {
+        return this.init().post(`/lead-handler/upload-docs`, formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+    }
 
 
 
