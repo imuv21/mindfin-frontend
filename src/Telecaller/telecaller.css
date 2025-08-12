@@ -108,8 +108,8 @@
     align-items: flex-start;
     justify-content: center;
     flex-direction: row;
-    padding: calc(0.25rem * 4);
-    gap: calc(0.40rem * 4);
+    padding: 20px;
+    gap: 20px;
 }
 
 .leadsTableCont {
@@ -119,7 +119,7 @@
     justify-content: flex-start;
     flex-direction: column;
     font-family: var(--font);
-    padding: calc(0.25rem * 4);
+    padding: 20px;
     gap: 20px;
 }
 
@@ -135,22 +135,48 @@
 
 /* overview page */
 
-.ltaGraph {
+.teleSubContOne {
     width: 60%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.subOne {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+}
+
+.teleSubContTwo {
+    width: 40%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ltaGraph {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: calc(0.25rem * 4);
+    padding: 20px;
 }
 
 .dlpGraph {
-    width: 40%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: calc(0.25rem * 4);
+    padding: 20px;
     position: relative;
 }
 
@@ -321,6 +347,12 @@
     font-family: var(--font);
 }
 
+.teleFilterBtn.active {
+    background-color: var(--focusColor);
+    color: #fff;
+    border-color: var(--focusColor);
+}
+
 .searchAndActions {
     display: flex;
     align-items: center;
@@ -354,7 +386,14 @@
     color: var(--brColor);
 }
 
+.leadsTableWrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .leadsTable {
+    min-width: max-content;
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
@@ -395,6 +434,22 @@
     transition: all 0.2s ease;
 }
 
+.assignedButton {
+    background-color: #e1ecff;
+    color: var(--gray);
+    border: none;
+    border-radius: var(--br);
+    padding: 2.5px 12px;
+    font-size: var(--infont);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.assignedButton:hover {
+    background-color: #d0e0ff;
+}
+
 .assignButton:hover {
     background-color: #d0e0ff;
 }
@@ -406,22 +461,22 @@
     font-weight: 500;
 }
 
-.status-process {
+.status-pending {
     background-color: #fff3cd;
     color: #856404;
 }
 
-.status-eligible {
+.status-process {
     background-color: #e1ecff;
     color: #0056d2;
 }
 
-.status-rnr {
+.status-closed {
     background-color: #d4f8df;
     color: #237a3f;
 }
 
-.status-rejected {
+.status-dropped {
     background-color: #ffe0e0;
     color: #c41c1c;
 }
@@ -748,7 +803,7 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 20px;
 }
@@ -947,13 +1002,6 @@
     color: var(--textColor);
 }
 
-.statusBadge {
-    padding: var(--telePad);
-    font-size: var(--infont);
-    border-radius: var(--br);
-    font-weight: 500;
-}
-
 .leadHistoryScrollable {
     width: 100%;
     max-height: 300px;
@@ -981,4 +1029,88 @@
     font-size: 14px;
     color: var(--textColor);
     font-family: var(--font);
+}
+
+
+/* Document section styles */
+.iconBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.iconBtn:hover {
+    color: #ff4d4f;
+}
+
+.uploadDocBtn {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+/* loader */
+.loaderCont {
+    height: 50vh;
+    width: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.loader {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #dee2e6;
+    border-top: 6px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.2rem;
+}
+
+.loaderText {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #495057;
+    letter-spacing: 0.5px;
+    transition: opacity 0.3s ease;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* credit manager overview - bar charts */
+
+.disbursalChart {
+    position: relative;
+}
+
+.disbursalChart .recharts-cartesian-grid line {
+    stroke: #eef2f6;
+}
+
+.disbursalChart .recharts-tooltip-wrapper {
+    z-index: 999;
+}
+
+.disbursalChart .recharts-xAxis text,
+.disbursalChart .recharts-yAxis text {
+    fill: var(--gray);
+    font-family: var(--font);
+    font-size: 13px;
+}
+
+.disbursalChart .recharts-rectangle {
+    shape-rendering: geometricPrecision;
 }

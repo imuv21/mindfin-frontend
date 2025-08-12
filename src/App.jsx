@@ -36,10 +36,12 @@ import AllHolidayLists from "./pages/Holidays/AllHolidayLists";
 import MyProfile from "./pages/Profile/MyProfile";
 import Notification from "./pages/Notification/Notification";
 import EditPayslip from "./pages/Payroll/EditPayslip";
-import ViewLeadData from "./DataEntry/ViewLeadData";
+
+// Data Entry
 import EditLeadForm from "./DataEntry/EditLeadForm";
 import UploadDocumnet from "./DataEntry/UploadDocumnet";
 import LeadDataList from "./DataEntry/LeadDataList";
+import ViewLeadData from "./DataEntry/ViewLeadData";
 
 // Admin
 import AdminDashboard from "./AdminModule/AdminDashboard";
@@ -53,14 +55,17 @@ import AdminDeleteLeadForm from "./AdminModule/AdminLeadDataList";
 //Credit Manager
 import CreditCibilScore from "./CreditManagerModule/CibilCreditScroe";
 
-
 // Telecaller
 import TelecallerOverview from "./Telecaller/Overview";
 import TelecallerLeadsData from "./Telecaller/LeadsData";
 import ViewLeadDetails from "./Telecaller/ViewLeadDetails";
+import EditLeadData from './Telecaller/EditLeadData';
 
+// Credit Manager
+import CreditOverview from './Credit Manager/Overview';
+import CreditLeadData from "./Credit Manager/LeadData";
 
-// Not found
+// Not Found
 import NotFound from "./pages/NotFound";
 
 
@@ -118,6 +123,8 @@ const App = () => {
           <Route path="/allHolidayLists" element={<AllHolidayLists />} />
           <Route path="/myProfile" element={<MyProfile />} />
           <Route path="/notification" element={<Notification />} />
+
+          {/* Data Entry */}
           <Route path="/leadDataList" element={<LeadDataList />} />
           <Route path="/viewLeadData/:id" element={<ViewLeadData />} />
           <Route path="/editLeadForm/:id" element={<EditLeadForm />} />
@@ -132,16 +139,16 @@ const App = () => {
           <Route path="/adminDeleteDataList/:id" element={<AdminDeleteLeadForm />} />
           <Route path="/adminDuplicateDataList" element={<AdminDuplicateLeadList />} />
 
-          {/* Credit Manager */}
-          <Route path="/cibilCreditScore" element={<CreditCibilScore />} />
-
-
-
-
           {/* Telecaller */}
           <Route path="/telecaller-overview" element={<TelecallerOverview />} />
           <Route path="/telecaller-leads-data" element={<TelecallerLeadsData />} />
-          <Route path="/telecaller-view-lead-details" element={<ViewLeadDetails />} />
+          <Route path="/telecaller-view-lead-details/:id" element={<ViewLeadDetails />} />
+          <Route path="/telecaller-edit-lead-data/:id" element={<EditLeadData />} />
+
+          {/* Credit Manager */}
+          <Route path="/credit-manager-overview" element={<CreditOverview />} />
+          <Route path="/credit-manager-lead-data" element={<CreditLeadData />} />
+          <Route path="/cibilCreditScore" element={<CreditCibilScore />} />
 
         </Route>
 

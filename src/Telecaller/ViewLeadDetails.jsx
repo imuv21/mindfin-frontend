@@ -1,34 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from "../components/layout/MainLayout";
 import ProfileHeader from "../components/layout/ProfileHeader";
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSingleLead, getLeadHistories } from '../redux/telecallerSlice';
+import { formatCurrency, formatDate, statusDisplay, statusColors } from '../components/utils';
+import Loader from "../components/ui/Loader";
 import {
     Close as CloseIcon, FileDownload as FileDownloadIcon, FileUpload as FileUploadIcon, Visibility as VisibilityIcon, Delete as DeleteIcon, PersonAdd as PersonAddIcon,
     Description as DocIcon
 } from '@mui/icons-material';
 import './telecaller.css';
 
-const dummyLead = {
-    name: 'Uday Kumar',
-    email: 'Bodgdan@gmail.com',
-    phone: '(307) 555-0133',
-    alternate: '(307) 555-0133',
-    location: 'Bangalore',
-    loanType: 'Personal',
-    loanAmount: '1,200,000',
-    createdDate: '2025-03-10',
-    representatives: 'Data Entry',
-    assignedTo: 'Telecaller 3'
-};
-
-const dummyDocs = [
-    { id: 1, name: 'Overview.pdf', size: '50 Kb' },
-    { id: 2, name: 'Contract.pdf', size: '50 Kb' },
-    { id: 3, name: 'Contract.pdf', size: '50 Kb' },
-    { id: 4, name: 'Overview.pdf', size: '50 Kb' },
-];
 
 const ViewLeadDetails = () => {
 
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { currentLead, singleLeadLoading, singleLeadError, histories } = useSelector(state => state.telecaller);
     const [showForm, setShowForm] = useState(false);
     const [historyList, setHistoryList] = useState([
         {
@@ -105,6 +95,27 @@ const ViewLeadDetails = () => {
         setShowForm(false);
     };
 
+    const handleDownload = async (url, filename) => {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename || 'file';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    };
+
+    const goBack = () => {
+        navigate('/telecaller-leads-data');
+    }
+
+    useEffect(() => {
+        if (id) {
+            dispatch(getSingleLead(id));
+            dispatch(getLeadHistories(id));
+        }
+    }, [dispatch, id]);
+
 
     return (
         <MainLayout>
@@ -122,142 +133,117 @@ const ViewLeadDetails = () => {
                                 <span className="bcItem active">View Lead Personal Information</span>
                             </nav>
                         </div>
-                        <button className="backBtn">Back</button>
+                        <button className="backBtn" onClick={goBack}>Back</button>
                     </div>
 
-                    <div className="topRow">
-                        <div className="card leadCard">
-                            <h3 className="teleHeading">Personal Information</h3>
-                            <div className="infoGrid">
-                                <div className="field">
-                                    <div className="teleSubHeading">Lead Name</div>
-                                    <div className="teleText">{dummyLead.name}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Email Address</div>
-                                    <div className="teleText">{dummyLead.email}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Phone Number</div>
-                                    <div className="teleText">{dummyLead.phone}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Alternate Number</div>
-                                    <div className="teleText">{dummyLead.alternate}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Location</div>
-                                    <div className="teleText">{dummyLead.location}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Loan Type</div>
-                                    <div className="teleText">{dummyLead.loanType}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Loan Amount</div>
-                                    <div className="teleText">{dummyLead.loanAmount}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Lead Created Date</div>
-                                    <div className="teleText">{dummyLead.createdDate}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Representatives</div>
-                                    <div className="teleText">{dummyLead.representatives}</div>
-                                </div>
-                                <div className="field">
-                                    <div className="teleSubHeading">Assigned To</div>
-                                    <div className="teleText">{dummyLead.assignedTo}</div>
+                    {singleLeadLoading ? <Loader /> :
+                        <div className="topRow">
+                            <div className="card leadCard">
+                                <h3 className="teleHeading">Personal Information</h3>
+                                <div className="infoGrid">
+                                    <div className="field">
+                                        <div className="teleSubHeading">Lead Name</div>
+                                        <div className="teleText">{currentLead?.leadName || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Email Address</div>
+                                        <div className="teleText">{currentLead?.email || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Phone Number</div>
+                                        <div className="teleText">{currentLead?.phone || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Alternate Number</div>
+                                        <div className="teleText">{currentLead?.alternativePhone || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Location</div>
+                                        <div className="teleText">{currentLead?.location || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Loan Type</div>
+                                        <div className="teleText">{currentLead?.loanType || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Loan Amount</div>
+                                        <div className="teleText">{currentLead?.loanAmount ? formatCurrency(currentLead.loanAmount) : "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Lead Created Date</div>
+                                        <div className="teleText">{currentLead?.LeadCreatedDate ? formatDate(currentLead.LeadCreatedDate) : "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Representatives</div>
+                                        <div className="teleText">{currentLead?.representatives || "Data Entry"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Assigned To</div>
+                                        <div className="teleText">{currentLead?.assignedTo || "N/A"}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="card docsCard">
-                            <h3 className="teleHeading">Uploaded Documents</h3>
-                            <ul className="docList">
-                                {dummyDocs.map(doc => (
-                                    <li key={doc.id} className="docItem">
-                                        <div className="docName">
-                                            <DocIcon />
-                                            <div>
-                                                <div className="teleSubHeading">{doc.name}</div>
-                                                <div className="teleText">{doc.size}</div>
+                            <div className="card docsCard">
+                                <h3 className="teleHeading">Uploaded Documents</h3>
+                                <ul className="docList">
+                                    {currentLead?.document?.map((doc, index) => (
+                                        <li key={index} className="docItem">
+                                            <div className="docName">
+                                                <DocIcon />
+                                                <div>
+                                                    <div className="teleSubHeading">{doc.name || "Document"}</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="docActions">
-                                            <FileDownloadIcon />
-                                            <VisibilityIcon />
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+                                            <div className="docActions">
+                                                <FileDownloadIcon onClick={() => handleDownload(doc.url, doc.name)} style={{ cursor: 'pointer' }} />
+                                                <a href={doc.url} target="_blank" rel="noreferrer">
+                                                    <VisibilityIcon />
+                                                </a>
+                                            </div>
+                                        </li>
+                                    ))}
+                                    {(!currentLead?.document || currentLead.document.length === 0) &&
+                                        <li className="teleText">No documents uploaded</li>
+                                    }
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    }
 
                     <div className="historyCard card">
                         <div className="historyHeader">
                             <h3 className="teleHeading">Lead History</h3>
-                            {historyList.length > 0 ? (
-                                <div className="statusBadge status-process">In Conversation</div>
-                            ) : (
-                                <button className="teleBtn" onClick={handleNewClick}>
-                                    <PersonAddIcon /> NEW
-                                </button>
+                            {currentLead?.status && (
+                                <div className={`statusTag ${statusColors[currentLead.status]}`}>
+                                    {statusDisplay[currentLead.status] || currentLead.status}
+                                </div>
                             )}
                         </div>
 
-                        {showForm ? (
-                            <div className="leadForm">
-                                <div className="formRow">
-                                    <div className="formGroup">
-                                        <label className='teleText'>Write a description</label>
-                                        <input type="text" placeholder="Enter" />
-                                    </div>
-                                    <div className="formGroup">
-                                        <label className='teleText'>Schedule date</label>
-                                        <select><option>Select</option></select>
-                                    </div>
-                                </div>
-
-                                <div className="formRow">
-                                    <div className="formGroup">
-                                        <label className='teleText'>Schedule time</label>
-                                        <select><option>Select</option></select>
-                                    </div>
-                                    <div className="formGroup">
-                                        <label className='teleText'>Status</label>
-                                        <select>
-                                            <option>In progress</option>
-                                            <option>Completed</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="formRow">
-                                    <div className="formGroup">
-                                        <label className='teleText'>Remarks</label>
-                                        <input type="text" placeholder="Enter" />
-                                    </div>
-                                    <div className="formGroup">
-                                    </div>
-                                </div>
-
-                                <div className="formActions">
-                                    <button className="teleBtn outline" onClick={handleCancel}>Cancel</button>
-                                    <button className="teleBtn">Save</button>
-                                </div>
-                            </div>
-                        ) : historyList.length > 0 ? (
+                        {histories && histories.length > 0 ? (
                             <div className="leadHistoryScrollable">
-                                {historyList.map((item) => (
-                                    <div key={item.id} className="historyItem">
-                                        <div className="teleText">{item.dateLabel}</div>
-                                        <p><strong>Description:</strong> {item.description}</p>
-                                        <p>
-                                            <strong>{item.reschedule ? 'Reschedule date:' : 'Schedule date:'}</strong>{' '}
-                                            <span style={{ color: 'red' }}>{item.scheduleDate}</span>
-                                        </p>
-                                        <p><strong>Remarks:</strong> {item.remarks}</p>
+                                {histories.map((history) => (
+                                    <div key={history._id} className="historyItem">
+                                        <div className="historyHeader">
+                                            <div className="teleText">
+                                                {formatDate(history.createdAt)}
+                                            </div>
+                                        </div>
+                                        <p><strong>Description:</strong> {history.description}</p>
+                                        {history.scheduledDate && (
+                                            <p>
+                                                <strong>Schedule:</strong>{' '}
+                                                <span style={{ color: 'red' }}>
+                                                    {formatDate(history.scheduledDate)} at {history.scheduledTime}
+                                                </span>
+                                            </p>
+                                        )}
+                                        <p><strong>Status:</strong> {history.status}</p>
+                                        {history.remarks && (
+                                            <p><strong>Remarks:</strong> {history.remarks}</p>
+                                        )}
+                                        <p><strong>Created by:</strong> {`${history?.createdBy?.firstName}  ${history?.createdBy?.lastName}`}</p>
                                     </div>
                                 ))}
                             </div>

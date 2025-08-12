@@ -8,6 +8,7 @@ import holidaySlice from "./holidaySlice";
 import leaveSlice from "./leaveSlice";
 import payrollSlice from "./payrollSlice";
 import leadsSlice from "./leadSlice";
+import teleCallerSlice from "./telecallerSlice";
 
 
 const rootReducer = combineReducers({
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
     holidays: holidaySlice,
     leave: leaveSlice,
     payroll: payrollSlice,
-    leads: leadsSlice
+    leads: leadsSlice,
+    telecaller: teleCallerSlice
 });
 
 export default rootReducer;

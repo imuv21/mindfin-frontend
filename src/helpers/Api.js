@@ -103,6 +103,62 @@ class Api {
     }
 
 
+    //telecaller
+    getAllTelecallerLeads = (params) => {
+        return this.init().get("/lead-handler/get-all-telecaller-leads", { params });
+    }
+
+    getALead = (id) => {
+        return this.init().get(`/tele-caller/get-a-lead/${id}`);
+    }
+
+    updateTeleLead = (id, data) => {
+        return this.init().put(`/lead-handler/update-telecaller-lead/${id}`, data);
+    }
+
+    deleteALead = (id) => {
+        return this.init().delete(`/tele-caller/delete-a-lead/${id}`);
+    }
+
+    getAllLoanType = () => {
+        return this.init().get("/lead-handler/get-all-loan-types");
+    }
+
+    uploadDocs = (data) => {
+        return this.init("multipart/form-data").post("/lead-handler/upload-docs", data);
+    }
+
+    exportTelecallerLeads = () => {
+        return this.init().get("/lead-handler/export-telecaller-leads");
+    }
+
+
+    // history
+    addHistory = (data) => {
+        return this.init().post("/lead-handler/add-lead-history", data);
+    }
+
+    getHistory = (id) => {
+        return this.init().get(`/lead-handler/get-all-lead-Histories/${id}`);
+    }
+
+    updateHistory = (id, data) => {
+        return this.init().put(`/lead-handler/update-lead-history/${id}`, data);
+    }
+
+    deleteHistory = (id) => {
+        return this.init().delete(`/lead-handler/delete-lead-history/${id}`);
+    }
+
+    getAllCreditMangers = () => {
+        return this.init().get("/lead-handler/get-all-credit-managers");
+    }
+
+    assignCreditManger = (data) => {
+        return this.init().put("/lead-handler/assign-lead-to-credit-manager", data);
+    }
+
+
     //designation
     getDesignations = () => {
         return this.init().get("/super-admin/get-all-desigantions")

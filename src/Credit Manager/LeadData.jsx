@@ -14,16 +14,16 @@ import {
     Close as CloseIcon, FileDownload as FileDownloadIcon, PersonAdd as PersonAddIcon, Description as DocIcon
 } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
-import './telecaller.css';
+import '../Telecaller/telecaller.css';
 
 
 
-const LeadsData = () => {
+const LeadData = () => {
 
     const columns = {
-        "In Conversation": ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Loan Amount", "Loan Type", "Status", "Upload", "Option"],
-        "Closed": ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Location", "Loan Amount", "Loan Type", "Lead Created Date", "Status", "Assign Credit Manager", "Option"],
-        "Dropped": ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Location", "Loan Amount", "Loan Type", "Drop Reason", "Option"]
+        "Tele caller 1": ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Loan Amount", "Loan Type", "Status", "Upload", "Option"],
+        "Tele caller 2": ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Location", "Loan Amount", "Loan Type", "Lead Created Date", "Status", "Assign Credit Manager", "Option"],
+        "Tele caller 3": ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Location", "Loan Amount", "Loan Type", "Drop Reason", "Option"]
     };
 
     const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const LeadsData = () => {
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [currentLeadId, setCurrentLeadId] = useState(null);
     const [selectedManager, setSelectedManager] = useState("");
-    const [activeTab, setActiveTab] = useState("In Conversation");
+    const [activeTab, setActiveTab] = useState("Tele caller 1");
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(5);
     const [searchTerm, setSearchTerm] = useState("");
@@ -410,7 +410,7 @@ const LeadsData = () => {
                 <div className="leadsTableCont border">
 
                     <div className="teleTabs">
-                        {["In Conversation", "Closed", "Dropped"].map((tab) => (
+                        {["Tele caller 1", "Tele caller 2", "Tele caller 3"].map((tab) => (
                             <button key={tab} onClick={() => handleTabChange(tab)} className={activeTab === tab ? "teleActiveTab" : ""}>
                                 {tab}
                             </button>
@@ -503,7 +503,7 @@ const LeadsData = () => {
                                             <td className="teleText">{lead.email || "N/A"}</td>
 
                                             {/* Tab-specific columns */}
-                                            {activeTab === "In Conversation" && (
+                                            {activeTab === "Tele caller 1" && (
                                                 <>
                                                     <td className="teleText">{formatCurrency(lead.loanAmount) || "N/A"}</td>
                                                     <td className="teleText">{lead.loanType?.loanName || "N/A"}</td>
@@ -531,7 +531,7 @@ const LeadsData = () => {
                                                 </>
                                             )}
 
-                                            {activeTab === "Closed" && (
+                                            {activeTab === "Tele caller 2" && (
                                                 <>
                                                     <td className="teleText">{lead.location || "N/A"}</td>
                                                     <td className="teleText">{formatCurrency(lead.loanAmount) || "N/A"}</td>
@@ -567,7 +567,7 @@ const LeadsData = () => {
                                                 </>
                                             )}
 
-                                            {activeTab === "Dropped" && (
+                                            {activeTab === "Tele caller 3" && (
                                                 <>
                                                     <td className="teleText">{lead.location || "N/A"}</td>
                                                     <td className="teleText">{formatCurrency(lead.loanAmount) || "N/A"}</td>
@@ -664,4 +664,4 @@ const LeadsData = () => {
     );
 };
 
-export default LeadsData;
+export default LeadData;

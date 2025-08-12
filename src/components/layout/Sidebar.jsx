@@ -14,6 +14,7 @@ import {
   Settings,
   Workflow
 } from "lucide-react";
+import { Notifications, Person } from "@mui/icons-material";
 import { getProfile } from "../../redux/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBranches, getAllDesignations } from "../../redux/employeeSlice.js";
@@ -33,22 +34,31 @@ const navItemsByDesignation = {
   ],
   ADMIN: [
     { icon: LayoutDashboard, label: "Admin Overview", href: "/adminDashboard", matchPaths: ["/adminDashboard"] },
-    { icon: LayoutDashboard, label: "Admin Leads", href: "/adminLeadDataList", matchPaths: ["/adminLeadDataList", "/adminUploadDataList", "/adminViewDataList", 
-      "/adminEditDataList", "/adminDuplicateDataList" ] },
+    {
+      icon: LayoutDashboard, label: "Admin Leads", href: "/adminLeadDataList", matchPaths: ["/adminLeadDataList", "/adminUploadDataList", "/adminViewDataList",
+        "/adminEditDataList", "/adminDuplicateDataList"]
+    },
   ],
   SUPERADMIN: [], // same as HR
   TELECALLER: [
     { icon: LayoutDashboard, label: "Overview", href: "/telecaller-overview", matchPaths: ["/telecaller-overview"] },
-    { icon: Users, label: "Leads Data", href: "/telecaller-leads-data", matchPaths: ["/telecaller-leads-data", "/telecaller-view-lead-details"] },
+    { icon: Users, label: "Leads Data", href: "/telecaller-leads-data", matchPaths: ["/telecaller-leads-data", "/telecaller-view-lead-details/:id", "/telecaller-edit-lead-data/:id"] },
     { icon: Settings, label: "Notifications", href: "/notifications", matchPaths: ["/notifications"] }
+  ],
+  DATAENTRY: [
+    { icon: LayoutDashboard, label: "Overview", href: "/dashboard", matchPaths: ["/dashboard"] },
+    { icon: Person, label: "Leads", href: "/leadDataList", matchPaths: ["/leadDataList", "/uploadDocument", "/viewLeadData", "/editLeadForm"] },
+    { icon: Notifications, label: "Notifications", href: "/notifications", matchPaths: ["/notifications"] },
+    { icon: Settings, label: "Setting", href: "/myProfile", matchPaths: ["/myProfile"] },
   ],
   BRANCHMANAGER: [
     { icon: LayoutDashboard, label: "Branch Overview", href: "/branchDashboard", matchPaths: ["/branchDashboard"] },
     { icon: Users, label: "Team", href: "/branchTeam", matchPaths: ["/branchTeam"] }
   ],
   CREDITMANAGER: [
-    { icon: LayoutDashboard, label: "Credit Dashboard", href: "/creditDashboard", matchPaths: ["/creditDashboard"] },
-    { icon: Users, label: "Pending Loans", href: "/pendingLoans", matchPaths: ["/pendingLoans"] }
+    { icon: LayoutDashboard, label: "Credit Dashboard", href: "/credit-manager-overview", matchPaths: ["/credit-manager-overview", "/credit-manager-lead-data"] },
+    { icon: Users, label: "Pending Loans", href: "/pendingLoans", matchPaths: ["/pendingLoans"] },
+    { icon: Settings, label: "Notifications", href: "/notifications", matchPaths: ["/notifications"] }
   ]
 };
 
@@ -94,30 +104,6 @@ const Sidebar = () => {
           );
         })}
       </nav>
-
-      {/*    <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center">
-          <div className="h-8 w-8 rounded-full overflow-hidden">
-            <img
-              src={
-                user?.user?.profileImg
-                  ? user?.user?.profileImg[0]
-                  : "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740"
-              }
-              alt={`${user?.user?.firstName} ${user?.user?.lastName}`}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="ml-2">
-            <p className="text-sm font-medium">
-              {user?.user?.firstName
-                ? `${user.user.firstName} ${user.user.lastName}`
-                : "user"}
-            </p>
-            <p className="text-xs text-gray-500">25 Oct - 27 Oct</p>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };
