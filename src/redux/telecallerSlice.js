@@ -8,7 +8,8 @@ export const getAllTelecallerLeads = createAsyncThunk(
     async (params, { rejectWithValue }) => {
         try {
             const response = await api.getAllTelecallerLeads(params);
-            return response.data.data;
+            console.log(response?.data?.data, "this is lead >> ");
+            return response?.data?.data;
 
         } catch (error) {
             return handleApiError(error, rejectWithValue);

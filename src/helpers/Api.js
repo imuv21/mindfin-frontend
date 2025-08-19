@@ -1,14 +1,8 @@
 import axios from "axios";
+import { store } from '../redux/store';
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-const getToken = async () => {
-    try {
-        const token = localStorage.getItem("accessToken");
-        return token;
-    } catch (error) {
-        return null;
-    }
-};
+
 
 class Api {
     constructor() {
@@ -35,8 +29,11 @@ class Api {
             headers: headers,
         });
         this.client.interceptors.request.use(async (config) => {
-            const token = await getToken();
-            config.headers["Authorization"] = `Bearer ${token}`
+
+            const token = store.getState().user.token;
+            if (token) {
+                config.headers["Authorization"] = `Bearer ${token}`;
+            }
             return config;
         }, (error) => {
             throw error;
@@ -157,6 +154,33 @@ class Api {
     assignCreditManger = (data) => {
         return this.init().put("/lead-handler/assign-lead-to-credit-manager", data);
     }
+
+
+    // credit manager 
+    getAllCreditManagerLeads = (params) => {
+        return this.init().get("/credit-manager/get-all-credit-manager-lead", { params });
+    }
+
+    addFollowUp = (data) => {
+        return this.init().post("/credit-manager/add-followup", data);
+    }
+
+    updateFollowUp = (id, data) => {
+        return this.init().put(`/credit-manager/bank/${id}`, data);
+    }
+
+    getAllFollowUps = (bankDetailId) => {
+        return this.init().get(`/credit-manager/bank/${bankDetailId}`);
+    }
+
+    getAFollowUp = (id) => {
+        return this.init().get(`/credit-manager/get-a-bank-follow-up/${id}`);
+    }
+
+    deleteFollowUp = (id) => {
+        return this.init().delete(`/credit-manager/bank/${id}`);
+    }
+
 
 
     //designation

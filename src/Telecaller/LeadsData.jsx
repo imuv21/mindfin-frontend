@@ -82,14 +82,14 @@ const LeadsData = () => {
         const files = e.target.files;
         if (!files || files.length === 0 || isUploading) return;
 
-        const maxSize = 50 * 1024; // 50 KB
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].size > maxSize) {
-                Toastify.error(`File "${files[i].name}" exceeds 50KB limit!`);
-                e.target.value = null;
-                return;
-            }
-        }
+        // const maxSize = 50 * 1024; // 50 KB
+        // for (let i = 0; i < files.length; i++) {
+        //     if (files[i].size > maxSize) {
+        //         Toastify.error(`File "${files[i].name}" exceeds 50KB limit!`);
+        //         e.target.value = null;
+        //         return;
+        //     }
+        // }
 
         setIsUploading(true);
 
@@ -288,6 +288,7 @@ const LeadsData = () => {
     };
 
     useEffect(() => {
+        console.log(leads, "this is lead in the forntend >> ");
         dispatch(getAllCreditManagers());
     }, [dispatch]);
 
@@ -383,7 +384,7 @@ const LeadsData = () => {
                                         <option value="">Select Credit Manager</option>
                                         {creditManagers.map((manager) => (
                                             <option key={manager._id} value={manager._id} selected={leads.find(l => l._id === currentLeadId)?.creditManger === manager._id}>
-                                                {manager.name} ({manager.totalTodayAssignedLeads} leads today)
+                                                {manager.name}
                                             </option>
                                         ))}
                                     </select>

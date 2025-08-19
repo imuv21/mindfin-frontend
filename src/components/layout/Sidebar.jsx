@@ -56,8 +56,20 @@ const navItemsByDesignation = {
     { icon: Users, label: "Team", href: "/branchTeam", matchPaths: ["/branchTeam"] }
   ],
   CREDITMANAGER: [
-    { icon: LayoutDashboard, label: "Credit Dashboard", href: "/credit-manager-overview", matchPaths: ["/credit-manager-overview", "/credit-manager-lead-data"] },
-    { icon: Users, label: "Pending Loans", href: "/pendingLoans", matchPaths: ["/pendingLoans"] },
+    { icon: LayoutDashboard, label: "Credit Dashboard", href: "/credit-manager-overview", matchPaths: ["/credit-manager-overview"] },
+    {
+      icon: Briefcase,
+      label: "Business Loan",
+      href: "#",
+      matchPaths: [],
+      children: [
+        { label: "Leads Data", href: "/credit-manager-lead-data", matchPaths: ["/credit-manager-lead-data", "/credit-manager-view-lead-data/:id", "/credit-manager-edit-lead-data/:id"] },
+        { label: "Document Verification", href: "/document-verification-data", matchPaths: ["/document-verification-data", "/document-verification/:id"] },
+        { label: "Bank Login", href: "/bank-login", matchPaths: ["/bank-login"] },
+        { label: "Disbursal", href: "/loan-disbursal", matchPaths: ["/loan-disbursal", "/loan-disbursal-detail/:id/:bankId"] },
+        { label: "Top Up", href: "/top-up", matchPaths: ["/top-up", "/top-up-detail/:id"] },
+      ]
+    },
     { icon: Settings, label: "Notifications", href: "/notifications", matchPaths: ["/notifications"] }
   ]
 };
@@ -92,15 +104,37 @@ const Sidebar = () => {
 
       <nav className="flex-1 px-3 space-y-1">
         {(navItemsByDesignation[role] || []).map((item) => {
+          const isActive = isPathMatch(item.matchPaths, currentPath);
+
           return (
-            <NavLink key={item.href} to={item.href}
-              className={cn("flex items-center px-4 py-3 text-sm rounded-md",
-                isPathMatch(item.matchPaths, currentPath) ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-700 hover:bg-gray-100"
+            <div key={item.label}>
+              <NavLink to={item.href !== "#" ? item.href : ""}
+                className={cn(
+                  "flex items-center px-4 py-3 text-sm rounded-md",
+                  isActive ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-700 hover:bg-gray-100"
+                )}
+              >
+                <item.icon className="h-5 w-5 mr-3" />
+                {item.label}
+              </NavLink>
+
+              {item.children && (
+                <div className="ml-8 mt-1 space-y-1">
+                  {item.children.map((child) => (
+                    <NavLink key={child.href} to={child.href}
+                      className={cn(
+                        "block text-sm py-1",
+                        isPathMatch(child.matchPaths, currentPath)
+                          ? "text-blue-600 font-medium"
+                          : "text-gray-500 hover:text-gray-700"
+                      )}
+                    >
+                      {child.label}
+                    </NavLink>
+                  ))}
+                </div>
               )}
-            >
-              <item.icon className="h-5 w-5 mr-3" />
-              {item.label}
-            </NavLink>
+            </div>
           );
         })}
       </nav>

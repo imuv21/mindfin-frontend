@@ -52,9 +52,6 @@ import AdminEditLeadForm from "./AdminModule/AdminEditLeadForm";
 import AdminDuplicateLeadList from "./AdminModule/DuplicateModal";
 import AdminDeleteLeadForm from "./AdminModule/AdminLeadDataList";
 
-//Credit Manager
-import CreditCibilScore from "./CreditManagerModule/CibilCreditScroe";
-
 // Telecaller
 import TelecallerOverview from "./Telecaller/Overview";
 import TelecallerLeadsData from "./Telecaller/LeadsData";
@@ -63,7 +60,15 @@ import EditLeadData from './Telecaller/EditLeadData';
 
 // Credit Manager
 import CreditOverview from './Credit Manager/Overview';
-import CreditLeadData from "./Credit Manager/LeadData";
+import CreditLeadData from "./Credit Manager/CreditLeadData";
+import CreditViewLeadData from './Credit Manager/ViewLeadData';
+import CreditEditLeadData from './Credit Manager/EditLeadData';
+import DocumentVerificationData from './Credit Manager/DocumentVerificationData';
+import DocumentVerification from './Credit Manager/DocumentVerification';
+import LoanDisbursal from './Credit Manager/LoanDisbursal';
+import LoanDisbursalDetail from './Credit Manager/LoanDisbursalDetail';
+import Topup from './Credit Manager/Topup';
+import TopupDetail from './Credit Manager/TopupDetail';
 
 // Not Found
 import NotFound from "./pages/NotFound";
@@ -77,6 +82,7 @@ const App = () => {
 
     <Router>
       <ToastContainer position="top-right" autoClose={2000} theme='dark' style={{ width: "350px" }} />
+
       <Routes>
 
         {/* Redirect root path */}
@@ -148,13 +154,23 @@ const App = () => {
           {/* Credit Manager */}
           <Route path="/credit-manager-overview" element={<CreditOverview />} />
           <Route path="/credit-manager-lead-data" element={<CreditLeadData />} />
-          <Route path="/cibilCreditScore" element={<CreditCibilScore />} />
+          <Route path="/credit-manager-view-lead-data/:id" element={<CreditViewLeadData />} />
+          <Route path="/credit-manager-edit-lead-data/:id" element={<CreditEditLeadData />} />
+          <Route path="/document-verification-data" element={<DocumentVerificationData />} />
+          <Route path="/document-verification/:id" element={<DocumentVerification />} />
+          <Route path="/loan-disbursal" element={<LoanDisbursal />} />
+          <Route path="/loan-disbursal-detail/:id/:bankId" element={<LoanDisbursalDetail />} />
+
+          <Route path="/top-up" element={<Topup />} />
+          <Route path="/top-up-detail/:id" element={<TopupDetail />} />
 
         </Route>
 
         {/* Redirect all unknown paths */}
         <Route path="*" element={<NotFound />} />
+
       </Routes>
+
     </Router>
   );
 };

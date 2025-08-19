@@ -13,7 +13,7 @@ import {
     Description as DocIcon, Save as SaveIcon
 } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
-import './telecaller.css';
+import '../Telecaller/telecaller.css';
 
 
 const EditLeadData = () => {
@@ -265,7 +265,7 @@ const EditLeadData = () => {
     };
 
     const goBack = () => {
-        navigate('/telecaller-leads-data');
+        navigate('/credit-manager-lead-data');
     }
 
     useEffect(() => {
@@ -430,7 +430,7 @@ const EditLeadData = () => {
                         </div>
                     }
 
-                    <div className="historyCard card">
+                    {/* <div className="historyCard card">
                         <div className="historyHeader">
                             <h3 className="teleHeading">Lead History</h3>
                             <button className="teleBtn" onClick={handleNewClick}>
@@ -538,7 +538,7 @@ const EditLeadData = () => {
                         ) : (
                             <div className="teleText">No History yet</div>
                         )}
-                    </div>
+                    </div> */}
 
                 </div>
             </div>
