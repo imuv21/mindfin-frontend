@@ -47,7 +47,7 @@ const navItemsByDesignation = {
   ],
   DATAENTRY: [
     { icon: LayoutDashboard, label: "Overview", href: "/dashboard", matchPaths: ["/dashboard"] },
-    { icon: Person, label: "Leads", href: "/leadDataList", matchPaths: ["/leadDataList", "/uploadDocument", "/viewLeadData", "/editLeadForm"] },
+    { icon: Person, label: "Leads Data", href: "/data-entry-leads-data", matchPaths: ["/data-entry-leads-data", "/data-entry-upload-document", "/data-entry-view-lead-data/:id", "/data-entry-edit-lead-form/:id"] },
     { icon: Notifications, label: "Notifications", href: "/notifications", matchPaths: ["/notifications"] },
     { icon: Settings, label: "Setting", href: "/myProfile", matchPaths: ["/myProfile"] },
   ],

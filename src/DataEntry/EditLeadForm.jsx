@@ -1,304 +1,180 @@
-import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import ProfileHeader from '@/components/layout/ProfileHeader';
-import MainLayout from './layout/MainLayout';
-import RoleBreadcrumbs from './layout/RoleBreadcrumbs';
+import React, { useState, useEffect } from 'react';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getADataEntryLead, updateDataEntryLead } from '../redux/dataEntrySlice';
+import { formatCurrency, formatDate } from '../components/utils';
+import Loader from "../components/ui/Loader";
 import Toastify from '../helpers/Toastify';
-import api from '../helpers/Api';
-import { Box, CircularProgress } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { setRefresh } from '../redux/leadSlice';
+import api from "../helpers/Api";
+import { Save as SaveIcon } from '@mui/icons-material';
+import '../Telecaller/telecaller.css';
+
 
 const EditLeadForm = () => {
 
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { dataEntrySingleLead, dataEntrySingleLeadLoading } = useSelector(state => state.dataEntry);
 
-    const {id} = useParams()
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const [loading,setLoading] = useState(false)
-    const [editLoading,setEditLoading] = useState(false)
-    
+    const [formData, setFormData] = useState({});
+    const [loanTypes, setLoanTypes] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-    const formik = useFormik({
-        initialValues: {
-            leadName: '',
-            phone: '',
-            alternativePhone: '',
-            email: '',
-            location: '',
-            loanType: '',
-            loanAmount: '',
-            LeadCreatedDate: '',
-            _id:''
-        },
-        validationSchema: Yup.object({
-            leadName: Yup.string().required('Full name is required'),
-            phone: Yup.string()
-                .matches(/^\d{10}$/, 'Phone number must be 10 digits')
-                .required('Phone number is required'),
-            alternativePhone: Yup.string()
-                .matches(/^\d{10}$/, 'Alternate number must be 10 digits')
-                .required('Alternate number is required'),
-            email: Yup.string().email('Invalid email').required('Email is required'),
-            location: Yup.string().required('Location is required'),
-            loanType: Yup.string().required('Loan type is required'),
-            loanAmount: Yup.number().typeError('Loan amount must be a number').required('Loan amount is required'),
-            LeadCreatedDate: Yup.date().required('Date is required'),
-        }),
-        onSubmit:async (values) => {
-            // console.log('Submitting lead:', values);
-            setEditLoading(true)
-
-            try {
-
-                const {data,status} = await api.updateALead(values)
-
-                if(status === 200){
-                    Toastify.success(' Lead Edited successfully')
-                    dispatch(setRefresh())
-                    navigate("/leadDataList")
-                }
-                
-            } catch (error) {
-                Toastify.error(error.response.data.message || `something went wrong`);
-
-            }finally{
-                setEditLoading(false)
-            }
-
-        },
-    });
-
-    const fetchData =async ()=>{
+    const handleSave = async () => {
+        if (isUpdating) return;
+        setIsUpdating(true);
         try {
-            setLoading(true)
-
-            const {data,status} = await api.getALead(id)
-            
-            if(status === 200){
-                const lead = data?.data;
-
-                formik.setValues({
-                    leadName: lead?.leadName || '',
-                    phone: lead?.phone || '',
-                    alternativePhone: lead?.alternativePhone || '',
-                    email: lead?.email || '',
-                    location: lead?.location || '',
-                    loanType: lead?.loanType || '',
-                    loanAmount: lead?.loanAmount || '',
-                    LeadCreatedDate: lead?.LeadCreatedDate ? lead.LeadCreatedDate.slice(0, 10) : '', 
-                    // LeadCreatedDate: lead?.LeadCreatedDate || '', 
-                    _id: lead?._id || ''
-                });
+            const result = await dispatch(updateDataEntryLead({
+                id: dataEntrySingleLead._id,
+                data: {
+                    ...formData,
+                    loanAmount: Number(formData.loanAmount)
+                }
+            })).unwrap();
+            if (result.success) {
+                Toastify.success("Lead updated successfully.");
             }
-            
         } catch (error) {
-                Toastify.error(error.response.data.message || `something went wrong`);
-            
-        }finally{
-            setLoading(false)
-
+            Toastify.error(error?.message || "Failed to update lead.");
+        } finally {
+            setIsUpdating(false);
         }
+    };
+
+    const fetchLoanTypes = async () => {
+        const result = await api.getAllLoanType();
+        if (result.data?.success) {
+            setLoanTypes(result.data?.data?.data);
+        }
+    };
+
+    const goBack = () => {
+        navigate('/data-entry-leads-data');
     }
 
-    useEffect(()=>{
-        fetchData()
-    },[id])
+    useEffect(() => {
+        if (id) {
+            dispatch(getADataEntryLead(id));
+            fetchLoanTypes();
+        }
+    }, [dispatch, id]);
+
+    useEffect(() => {
+        if (dataEntrySingleLead && loanTypes?.length > 0) {
+            const matchedLoanType = loanTypes.find(
+                loan => loan.loanName === dataEntrySingleLead.loanType
+            );
+            setFormData({
+                leadName: dataEntrySingleLead.leadName || "",
+                email: dataEntrySingleLead.email || "",
+                phone: dataEntrySingleLead.phone || "",
+                alternativePhone: dataEntrySingleLead.alternativePhone || "",
+                location: dataEntrySingleLead.location || "",
+                loanType: matchedLoanType?._id || "",
+                loanAmount: dataEntrySingleLead.loanAmount ? String(dataEntrySingleLead.loanAmount) : ""
+            });
+        }
+    }, [dataEntrySingleLead, loanTypes]);
 
     return (
         <MainLayout>
-            <ProfileHeader
-             name={loading ? 'Loading...' : formik.values.leadName}
+            <ProfileHeader name="User Name" breadcrumbs={[""]} />
 
-            />
-            <RoleBreadcrumbs
-            //Edit Lead Personal Information
+            <div className='teleCont'>
+                <div className="viewLeadsCont">
 
-            name='Edit Lead Personal Information'
-            breadcrumbs={['Leads Data' , 'Edit Lead Personal Information']}
-            />
-
-          {loading ? (
-                      <Box
-                          sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: '60vh',
-                              width: '100%',
-                          }}
-                      >
-                          <CircularProgress />
-                      </Box>
-                  ) : (  
-                    <>
-            <form onSubmit={formik.handleSubmit}>
-                <div className="bg-white p-6 rounded-xl m-4">
-                    <h2 className="text-[16px] font-semibold mb-4">Personal Information</h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
-                            <input
-                                type="text"
-                                name="leadName"
-                                value={formik.values.leadName}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {formik.touched.leadName && formik.errors.leadName && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.leadName}</p>
-                            )}
+                    <div className="pageHeader">
+                        <div className="headerLeft">
+                            <h2 className="teleSupHeading">Edit Lead Personal Information</h2>
+                            <nav className="breadcrumbs">
+                                <span className="bcItem">Leads Data</span>
+                                <span className="bcSeparator">›</span>
+                                <span className="bcItem active">Edit Lead Personal Information</span>
+                            </nav>
                         </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
-                            <input
-                                type="text"
-                                name="phone"
-                                value={formik.values.phone}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.phone && formik.errors.phone && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.phone}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Alternate Number</label>
-                            <input
-                                type="text"
-                                name="alternativePhone"
-                                value={formik.values.alternativePhone}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.alternativePhone && formik.errors.alternativePhone && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.alternativePhone}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formik.values.email}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.email && formik.errors.email && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.email}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Loan Amount</label>
-                            <input
-                                type="text"
-                                name="loanAmount"
-                                value={formik.values.loanAmount}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.loanAmount && formik.errors.loanAmount && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.loanAmount}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                            <input
-                                type="text"
-                                name="location"
-                                value={formik.values.location}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.location && formik.errors.location && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.location}</p>
-                            )}
-                        </div>
-
-                        {/* <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Loan Type</label>
-                            <input
-                                type="text"
-                                name="loanType"
-                                value={formik.values.loanType}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.loanType && formik.errors.loanType && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.loanType}</p>
-                            )}
-                        </div> */}
-
-<div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Loan Type</label>
-    <select
-        name="loanType"
-        value={formik.values.loanType}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-3 py-2 "
-    >
-        <option value="" disabled>Select Loan Type</option>
-        <option value="Personal Loan">Personal</option>
-        <option value="Home Loan">Home</option>
-        <option value="Business Loan">Business</option>
-        <option value="Education Loan">Education</option>
-        <option value="Vehicle Loan">Vehicle</option>
-        <option value="Gold Loan">Gold</option>
-    </select>
-    {formik.touched.loanType && formik.errors.loanType && (
-        <p className="text-red-500 text-sm mt-1">{formik.errors.loanType}</p>
-    )}
-</div>
-
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Lead Created Date</label>
-                            <input
-                                type="date"
-                                name="LeadCreatedDate"
-                                value={formik.values.LeadCreatedDate}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full text-[16px] text-[#8C94A3] rounded-xl border border-gray-300 px-4 py-2"
-                            />
-                            {formik.touched.LeadCreatedDate && formik.errors.LeadCreatedDate && (
-                                <p className="text-red-500 text-sm mt-1">{formik.errors.LeadCreatedDate}</p>
-                            )}
-                        </div>
+                        <button className="backBtn" onClick={goBack}>Back</button>
                     </div>
 
-                    <div className="mt-6">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-[16px] py-2 px-6 rounded-lg cursor-pointer w-60"
-                        >
-                          {editLoading ? <CircularProgress size={25} color='white' /> : `Save Changes`}  
-                        </button>
-                    </div>
+                    {dataEntrySingleLeadLoading ? <Loader /> :
+                        <div className="topRow">
+                            <div className="card leadCard">
+                                <div className="leadForm">
+
+                                    <div className="formRow">
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Lead Name</div>
+                                            <input type="text" name="leadName" value={formData.leadName} onChange={handleInputChange} className="teleInput" />
+                                        </div>
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Email Address</div>
+                                            <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="teleInput" />
+                                        </div>
+                                    </div>
+
+                                    <div className="formRow">
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Phone Number</div>
+                                            <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="teleInput" />
+                                        </div>
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Alternate Number</div>
+                                            <input type="tel" name="alternativePhone" value={formData.alternativePhone} onChange={handleInputChange} className="teleInput" />
+                                        </div>
+                                    </div>
+
+                                    <div className="formRow">
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Location</div>
+                                            <input type="text" name="location" value={formData.location} onChange={handleInputChange} className="teleInput" />
+                                        </div>
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Loan Type</div>
+                                            <select name="loanType" value={formData.loanType} onChange={handleInputChange} className="teleSelect">
+                                                <option value="">Select Loan Type</option>
+                                                {loanTypes && loanTypes.length > 0 && loanTypes.map((loanType, index) => (
+                                                    <option key={index} value={loanType?._id}>
+                                                        {loanType?.loanName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="formRow">
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Loan Amount</div>
+                                            <input type="number" name="loanAmount" value={formData.loanAmount} onChange={handleInputChange} className="teleInput" />
+                                        </div>
+                                        <div className="formGroup">
+                                            <div className="teleSubHeading">Lead Created Date</div>
+                                            <div className="teleText">
+                                                {dataEntrySingleLead?.LeadCreatedDate ? formatDate(dataEntrySingleLead.LeadCreatedDate) : "N/A"}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="formActions">
+                                        <button className="teleBtn" onClick={handleSave} disabled={isUpdating}>
+                                            <SaveIcon /> {isUpdating ? "Saving..." : "Save"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-            </form>
-            </>
-                  )}
+            </div>
+
         </MainLayout>
     );
 };
 
 export default EditLeadForm;
-

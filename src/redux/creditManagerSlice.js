@@ -3,6 +3,7 @@ import api from "../helpers/Api";
 import { handleApiError } from '@/components/utils';
 
 
+
 export const getAllCreditManagerLeads = createAsyncThunk(
     'credit/getAllCreditManagerLeads',
     async (params, { rejectWithValue }) => {
@@ -39,6 +40,7 @@ export const getAllTelecallers = createAsyncThunk(
         }
     }
 );
+
 
 
 export const addFollowUp = createAsyncThunk(
@@ -95,6 +97,56 @@ export const deleteFollowUp = createAsyncThunk(
 
 
 
+export const addTopup = createAsyncThunk(
+    'credit/addTopup',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await api.addTopup(data);
+            return response.data;
+        } catch (error) {
+            return handleApiError(error, rejectWithValue);
+        }
+    }
+);
+
+export const updateTopup = createAsyncThunk(
+    'credit/updateTopup',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await api.updateTopup(id, data);
+            return response.data;
+        } catch (error) {
+            return handleApiError(error, rejectWithValue);
+        }
+    }
+);
+
+export const getAllTopups = createAsyncThunk(
+    'credit/getAllTopups',
+    async (applicantId, { rejectWithValue }) => {
+        try {
+            const response = await api.getAllTopups(applicantId);
+            return response.data;
+        } catch (error) {
+            return handleApiError(error, rejectWithValue);
+        }
+    }
+);
+
+export const deleteTopup = createAsyncThunk(
+    'credit/deleteTopup',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await api.deleteTopup(id);
+            return { id, ...response.data };
+        } catch (error) {
+            return handleApiError(error, rejectWithValue);
+        }
+    }
+);
+
+
+
 const initialState = {
 
     creditLoading: false,
@@ -132,7 +184,23 @@ const initialState = {
     updateFollowUpError: null,
 
     deletingFollowUp: false,
-    deleteFollowUpError: null
+    deleteFollowUpError: null,
+
+
+
+    topups: [],
+    topupsLoading: false,
+    topupsError: null,
+
+    addTopupLoading: false,
+    addTopupError: null,
+
+    updateTopupLoading: false,
+    updateTopupError: null,
+
+    deleteTopupLoading: false,
+    deleteTopupError: null
+
 };
 
 const creditManagerSlice = createSlice({
@@ -142,6 +210,10 @@ const creditManagerSlice = createSlice({
         resetFollowUpsState: (state) => {
             state.currentBankId = null;
             state.followUps = [];
+        },
+        resetTopupsState: (state) => {
+            state.topups = [];
+            state.topupsError = null;
         }
     },
     extraReducers: (builder) => {
@@ -272,8 +344,74 @@ const creditManagerSlice = createSlice({
                 state.deletingFollowUp = false;
                 state.deleteFollowUpError = action.payload?.message || "Failed to delete follow-up";
             })
+
+
+
+            .addCase(getAllTopups.pending, (state) => {
+                state.topupsLoading = true;
+                state.topupsError = null;
+            })
+            .addCase(getAllTopups.fulfilled, (state, action) => {
+                state.topupsLoading = false;
+                if (action.payload.success) {
+                    state.topups = action.payload.data;
+                }
+            })
+            .addCase(getAllTopups.rejected, (state, action) => {
+                state.topupsLoading = false;
+                state.topupsError = action.payload?.message || "Failed to fetch topups";
+            })
+
+            .addCase(addTopup.pending, (state) => {
+                state.addTopupLoading = true;
+                state.addTopupError = null;
+            })
+            .addCase(addTopup.fulfilled, (state, action) => {
+                state.addTopupLoading = false;
+                if (action.payload.success) {
+                    state.topups.push(action.payload.data);
+                }
+            })
+            .addCase(addTopup.rejected, (state, action) => {
+                state.addTopupLoading = false;
+                state.addTopupError = action.payload?.message || "Failed to add topup";
+            })
+
+            .addCase(updateTopup.pending, (state) => {
+                state.updateTopupLoading = true;
+                state.updateTopupError = null;
+            })
+            .addCase(updateTopup.fulfilled, (state, action) => {
+                state.updateTopupLoading = false;
+                if (action.payload.success) {
+                    const index = state.topups.findIndex(topup => topup._id === action.payload.data._id);
+                    if (index !== -1) {
+                        state.topups[index] = action.payload.data;
+                    }
+                }
+            })
+            .addCase(updateTopup.rejected, (state, action) => {
+                state.updateTopupLoading = false;
+                state.updateTopupError = action.payload?.message || "Failed to update topup";
+            })
+
+            .addCase(deleteTopup.pending, (state) => {
+                state.deleteTopupLoading = true;
+                state.deleteTopupError = null;
+            })
+            .addCase(deleteTopup.fulfilled, (state, action) => {
+                state.deleteTopupLoading = false;
+                if (action.payload.success) {
+                    state.topups = state.topups.filter(topup => topup._id !== action.payload.id);
+                }
+            })
+            .addCase(deleteTopup.rejected, (state, action) => {
+                state.deleteTopupLoading = false;
+                state.deleteTopupError = action.payload?.message || "Failed to delete topup";
+            })
+
     }
 });
 
-export const { resetFollowUpsState } = creditManagerSlice.actions;
+export const { resetFollowUpsState, resetTopupsState } = creditManagerSlice.actions;
 export default creditManagerSlice.reducer;

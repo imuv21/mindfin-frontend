@@ -1040,20 +1040,13 @@ export default function NewEmployee() {
                       onBlur={handleBlur}
                     >
                       <option value="">Select Designation</option>
-                      {/* {designations &&
-                        designations.map((designation, index) => (
-                          <option key={designation._id} value={designation._id}>
+                      {designations && designations.length > 0 && designations
+                        .filter(d => d.designation !== "SUPERADMIN" && d.designation !== "ADMIN" && d.designation !== "EMPLOYEE")
+                        .map((designation, index) => (
+                          <option key={index} value={designation._id}>
                             {designation.designation}
                           </option>
-                        ))} */}
-                      {designations &&
-                        designations
-                          .filter((d) => d.designation !== "SUPERADMIN")
-                          .map((designation, index) => (
-                            <option key={index} value={designation._id}>
-                              {designation.designation}
-                            </option>
-                          ))}
+                        ))}
                     </select>
                     {errors.designation && touched.designation && (
                       <div className="text-red-500 text-sm mt-1">{errors.designation}</div>

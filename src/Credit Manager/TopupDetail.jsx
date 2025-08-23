@@ -4,7 +4,7 @@ import ProfileHeader from "../components/layout/ProfileHeader";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSingleLead, getLeadHistories } from '../redux/telecallerSlice';
-import { getAllFollowUps, addFollowUp, updateFollowUp, deleteFollowUp, resetFollowUpsState } from "../redux/creditManagerSlice";
+import { addTopup, updateTopup, getAllTopups, deleteTopup, resetTopupsState } from "../redux/creditManagerSlice";
 import { formatCurrency, formatDate } from '../components/utils';
 import Loader from "../components/ui/Loader";
 import Toastify from '../helpers/Toastify';
@@ -59,136 +59,119 @@ const TopupDetail = () => {
 
 
     // follow up
-    const { followUps, loadingFollowUps } = useSelector(state => state.credit);
+    const { topups, topupsLoading, addTopupLoading, updateTopupLoading } = useSelector(state => state.credit);
     const [showForm, setShowForm] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const [currentFollowUp, setCurrentFollowUp] = useState(null);
+    const [currentTopup, setCurrentTopup] = useState(null);
     const [isAdded, setIsAdded] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
-    const initialFormState = {
-        bankDetail: bankId,
-        loanAmountRequested: "",
-        rateOfInterest: "",
-        pf: "",
-        tenure: "",
-        insuranceAmount: "",
-        date: "",
-        followUpDate: "",
-        status: "",
-        remarks: "",
-    };
-    const [followFormData, setFollowFormData] = useState(initialFormState);
     const [deletingId, setDeletingId] = useState(null);
 
-    useEffect(() => {
-        dispatch(getAllFollowUps(bankId));
+    const initialFormState = {
+        applicant: id,
+        type: "Personal",
+        amount: "",
+        status: "Pending",
+        cibilScore: "",
+        remarks: "",
+    };
+    const [topupFormData, setTopupFormData] = useState(initialFormState);
 
+    useEffect(() => {
+        if (id) {
+            dispatch(getAllTopups(id));
+        }
         return () => {
-            dispatch(resetFollowUpsState());
+            dispatch(resetTopupsState());
         };
-    }, [bankId, dispatch]);
+    }, [id, dispatch]);
 
     const handleAddNewTopup = () => {
-        setFollowFormData(initialFormState);
+        setTopupFormData(initialFormState);
         setEditMode(false);
-        setCurrentFollowUp(null);
+        setCurrentTopup(null);
         setShowForm(true);
     };
 
-    const handleFollowChange = (e) => {
+    const handleTopupChange = (e) => {
         const { name, value } = e.target;
-        setFollowFormData(prev => ({ ...prev, [name]: value }));
+        setTopupFormData(prev => ({ ...prev, [name]: name === 'amount' || name === 'cibilScore' ? Number(value) : value }));
     };
 
-    const handleFollowSubmit = async (e) => {
+    const handleTopupSubmit = async (e) => {
         e.preventDefault();
         if (isAdded) return;
         setIsAdded(true);
         try {
-            const result = await dispatch(addFollowUp(followFormData)).unwrap();
+            const result = await dispatch(addTopup(topupFormData)).unwrap();
 
             if (result.success) {
-                Toastify.success("Follow-up added successfully!");
+                Toastify.success("Topup added successfully!");
                 setShowForm(false);
-                setFollowFormData({
-                    bankDetail: bankId,
-                    loanAmountRequested: "",
-                    rateOfInterest: "",
-                    pf: "",
-                    tenure: "",
-                    insuranceAmount: "",
-                    date: "",
-                    followUpDate: "",
-                    status: "",
-                    remarks: "",
-                });
+                setTopupFormData(initialFormState);
             } else {
-                Toastify.error(result.message || "Failed to add follow-up");
+                Toastify.error(result.message || "Failed to add topup");
             }
         } catch (err) {
-            Toastify.error(err?.message || "Failed to add follow-up");
+            Toastify.error(err?.message || "Failed to add topup");
         } finally {
             setIsAdded(false);
         }
     };
 
-    const handleFollowEdit = (followUp) => {
-        setCurrentFollowUp(followUp);
+    const handleTopupEdit = (topup) => {
+        setCurrentTopup(topup);
         setEditMode(true);
-        setFollowFormData({
-            bankDetail: bankId,
-            loanAmountRequested: followUp.loanAmountRequested,
-            rateOfInterest: followUp.rateOfInterest,
-            pf: followUp.pf,
-            tenure: followUp.tenure,
-            insuranceAmount: followUp.insuranceAmount,
-            date: followUp.date.split('T')[0],
-            followUpDate: followUp.followUpDate.split('T')[0],
-            status: followUp.status,
-            remarks: followUp.remarks,
+        setTopupFormData({
+            applicant: topup.applicant,
+            type: topup.type,
+            amount: topup.amount,
+            status: topup.status,
+            cibilScore: topup.cibilScore,
+            remarks: topup.remarks,
         });
         setShowForm(true);
     };
 
-    const handleFollowUpdateSubmit = async (e) => {
+    const handleTopupUpdateSubmit = async (e) => {
         e.preventDefault();
         if (isUpdated) return;
         setIsUpdated(true);
         try {
-            const result = await dispatch(updateFollowUp({
-                id: currentFollowUp._id,
-                data: followFormData
+            const result = await dispatch(updateTopup({
+                id: currentTopup._id,
+                data: topupFormData
             })).unwrap();
 
             if (result.success) {
-                Toastify.success("Follow-up updated successfully!");
+                Toastify.success("Topup updated successfully!");
                 setShowForm(false);
                 setEditMode(false);
-                setCurrentFollowUp(null);
+                setCurrentTopup(null);
             } else {
-                Toastify.error(result.message || "Failed to update follow-up");
+                Toastify.error(result.message || "Failed to update topup");
             }
         } catch (err) {
-            Toastify.error(err?.message || "Failed to update follow-up");
+            Toastify.error(err?.message || "Failed to update topup");
         } finally {
             setIsUpdated(false);
         }
     };
 
-    const handleFollowDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this follow-up?")) {
+    const handleTopupDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this topup?")) {
             if (deletingId) return;
             setDeletingId(id);
             try {
-                const result = await dispatch(deleteFollowUp(id)).unwrap();
+                const result = await dispatch(deleteTopup(id)).unwrap();
 
                 if (result.success) {
-                    Toastify.success(result.data?.message || "Follow-up deleted successfully!");
+                    Toastify.success(result.data?.message || "Topup deleted successfully!");
                 } else {
-                    Toastify.error(result.message || "Failed to delete follow-up");
+                    Toastify.error(result.message || "Failed to delete topup");
                 }
             } catch (err) {
-                Toastify.error(err?.message || "Failed to delete follow-up");
+                Toastify.error(err?.message || "Failed to delete topup");
             } finally {
                 setDeletingId(null);
             }
@@ -768,7 +751,7 @@ const TopupDetail = () => {
                         <div className="followUpHeader">
                             <h3 className="teleHeading">Topup History</h3>
                             <button className="teleBtn" onClick={handleAddNewTopup}>
-                                Add Next Topup
+                                Add New Topup
                             </button>
                         </div>
 
@@ -777,48 +760,40 @@ const TopupDetail = () => {
                                 <table className="leadsTable">
                                     <thead>
                                         <tr>
-                                            {/* <th></th> */}
-                                            <th className="teleSubHeading">Scheduled Date</th>
-                                            <th className="teleSubHeading">Follow-up Date</th>
-                                            <th className="teleSubHeading">Loan Amount Requested</th>
-                                            <th className="teleSubHeading">Rate Of Interest</th>
-                                            <th className="teleSubHeading">PF</th>
-                                            <th className="teleSubHeading">Tenure</th>
-                                            <th className="teleSubHeading">Insurance Amount</th>
-                                            <th className="teleSubHeading">Current Status</th>
+                                            <th className="teleSubHeading">Type</th>
+                                            <th className="teleSubHeading">Amount</th>
+                                            <th className="teleSubHeading">Status</th>
+                                            <th className="teleSubHeading">CIBIL Score</th>
                                             <th className="teleSubHeading">Remarks</th>
+                                            <th className="teleSubHeading">Created Date</th>
                                             <th className="teleSubHeading">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {loadingFollowUps ? (
+                                        {topupsLoading ? (
                                             <tr>
-                                                <td colSpan="11" className="text-center">Loading follow-ups...</td>
+                                                <td colSpan="7" className="text-center">Loading topups...</td>
                                             </tr>
-                                        ) : followUps.length === 0 ? (
+                                        ) : topups?.length === 0 ? (
                                             <tr>
-                                                <td colSpan="11" className="text-center">No follow-ups found</td>
+                                                <td colSpan="7" className="text-center">No topups found</td>
                                             </tr>
                                         ) : (
-                                            followUps.map((item) => (
+                                            topups?.map((item) => (
                                                 <tr key={item._id}>
-                                                    {/* <td><input type="checkbox" /></td> */}
-                                                    <td>{formatDate(item.date)}</td>
-                                                    <td>{formatDate(item.followUpDate)}</td>
-                                                    <td>₹{item.loanAmountRequested.toLocaleString()}</td>
-                                                    <td>{item.rateOfInterest}%</td>
-                                                    <td>{item.pf || "-"}</td>
-                                                    <td>{item.tenure}</td>
-                                                    <td>₹{item.insuranceAmount?.toLocaleString() || "-"}</td>
+                                                    <td>{item.type}</td>
+                                                    <td>₹{item.amount.toLocaleString()}</td>
                                                     <td>{item.status}</td>
+                                                    <td>{item.cibilScore || "-"}</td>
                                                     <td>{item.remarks || "-"}</td>
+                                                    <td>{formatDate(item.createdAt)}</td>
                                                     <td>
                                                         <div className='actionIcons'>
-                                                            <BorderColorIcon onClick={() => handleFollowEdit(item)} />
+                                                            <BorderColorIcon onClick={() => handleTopupEdit(item)} />
                                                             {deletingId === item._id ? (
                                                                 <CircularProgress size={20} />
                                                             ) : (
-                                                                <DeleteIcon onClick={() => handleFollowDelete(item._id)} />
+                                                                <DeleteIcon onClick={() => handleTopupDelete(item._id)} />
                                                             )}
                                                         </div>
                                                     </td>
@@ -831,81 +806,29 @@ const TopupDetail = () => {
                         )}
 
                         {showForm && (
-                            <form className="loanFormCont" onSubmit={editMode ? handleFollowUpdateSubmit : handleFollowSubmit}>
-
+                            <form className="loanFormCont" onSubmit={editMode ? handleTopupUpdateSubmit : handleTopupSubmit}>
                                 <div className="formRow">
                                     <div className="formGroup">
-                                        <div className="teleSubHeading">Loan Amount Requested</div>
-                                        <input
-                                            type="number"
-                                            name="loanAmountRequested"
-                                            placeholder="Loan Amount Requested"
-                                            value={followFormData.loanAmountRequested}
-                                            onChange={handleFollowChange}
-                                            className="border teleText"
+                                        <div className="teleSubHeading">Type</div>
+                                        <select
+                                            name="type"
+                                            value={topupFormData.type}
+                                            onChange={handleTopupChange}
+                                            className="styledSelect"
                                             required
-                                        />
+                                        >
+                                            <option value="Personal">Personal</option>
+                                            <option value="Business">Business</option>
+                                        </select>
                                     </div>
                                     <div className="formGroup">
-                                        <div className="teleSubHeading">Rate Of Interest</div>
+                                        <div className="teleSubHeading">Amount</div>
                                         <input
                                             type="number"
-                                            name="rateOfInterest"
-                                            placeholder="Rate Of Interest"
-                                            value={followFormData.rateOfInterest}
-                                            onChange={handleFollowChange}
-                                            className="border teleText"
-                                            required
-                                            step="0.01"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="formRow">
-                                    <div className="formGroup">
-                                        <div className="teleSubHeading">PF</div>
-                                        <input
-                                            type="number"
-                                            name="pf"
-                                            placeholder="PF"
-                                            value={followFormData.pf}
-                                            onChange={handleFollowChange}
-                                            className="border teleText"
-                                        />
-                                    </div>
-                                    <div className="formGroup">
-                                        <div className="teleSubHeading">Tenure</div>
-                                        <input
-                                            type="text"
-                                            name="tenure"
-                                            placeholder="Tenure"
-                                            value={followFormData.tenure}
-                                            onChange={handleFollowChange}
-                                            className="border teleText"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="formRow">
-                                    <div className="formGroup">
-                                        <div className="teleSubHeading">Insurance Amount</div>
-                                        <input
-                                            type="number"
-                                            name="insuranceAmount"
-                                            placeholder="Insurance Amount"
-                                            value={followFormData.insuranceAmount}
-                                            onChange={handleFollowChange}
-                                            className="border teleText"
-                                        />
-                                    </div>
-                                    <div className="formGroup">
-                                        <div className="teleSubHeading">Follow-up Date</div>
-                                        <input
-                                            type="date"
-                                            name="followUpDate"
-                                            value={followFormData.followUpDate}
-                                            onChange={handleFollowChange}
+                                            name="amount"
+                                            placeholder="Amount"
+                                            value={topupFormData.amount}
+                                            onChange={handleTopupChange}
                                             className="border teleText"
                                             required
                                         />
@@ -917,26 +840,25 @@ const TopupDetail = () => {
                                         <div className="teleSubHeading">Status</div>
                                         <select
                                             name="status"
-                                            value={followFormData.status}
-                                            onChange={handleFollowChange}
+                                            value={topupFormData.status}
+                                            onChange={handleTopupChange}
                                             className="styledSelect"
                                             required
                                         >
-                                            <option value="">Select Status</option>
-                                            <option value="Confirmed">Confirmed</option>
-                                            <option value="In Progress">In Progress</option>
-                                            <option value="Declined">Declined</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Rejected">Rejected</option>
                                         </select>
                                     </div>
                                     <div className="formGroup">
-                                        <div className="teleSubHeading">Scheduled Date</div>
+                                        <div className="teleSubHeading">CIBIL Score</div>
                                         <input
-                                            type="date"
-                                            name="date"
-                                            value={followFormData.date}
-                                            onChange={handleFollowChange}
+                                            type="number"
+                                            name="cibilScore"
+                                            placeholder="CIBIL Score"
+                                            value={topupFormData.cibilScore}
+                                            onChange={handleTopupChange}
                                             className="border teleText"
-                                            required
                                         />
                                     </div>
                                 </div>
@@ -947,8 +869,8 @@ const TopupDetail = () => {
                                         <textarea
                                             name="remarks"
                                             placeholder="Remarks"
-                                            value={followFormData.remarks}
-                                            onChange={handleFollowChange}
+                                            value={topupFormData.remarks}
+                                            onChange={handleTopupChange}
                                             className="border teleText"
                                             rows="3"
                                         />
@@ -960,13 +882,13 @@ const TopupDetail = () => {
                                         onClick={() => {
                                             setShowForm(false);
                                             setEditMode(false);
-                                            setCurrentFollowUp(null);
+                                            setCurrentTopup(null);
                                         }}
                                     >
                                         Cancel
                                     </button>
-                                    <button type="submit" className="teleBtn" disabled={isAdded || isUpdated}>
-                                        {editMode ? (isUpdated ? "Updating..." : "Update Follow-up") : (isAdded ? "Saving..." : "Save Follow-up")}
+                                    <button type="submit" className="teleBtn" disabled={addTopupLoading || updateTopupLoading}>
+                                        {editMode ? (updateTopupLoading ? "Updating..." : "Update Topup") : (addTopupLoading ? "Saving..." : "Save Topup")}
                                     </button>
                                 </div>
                             </form>

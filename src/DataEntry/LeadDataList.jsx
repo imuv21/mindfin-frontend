@@ -1,230 +1,300 @@
-import React, { useEffect, useState } from 'react';
-import {
-  styled,
-  Box, Paper, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Checkbox, IconButton, Typography,
-  CircularProgress
-} from '@mui/material';
-import { Edit, Delete, Visibility } from '@mui/icons-material';
-import CustomPagination from './Components/Pagination';
-import Filterbar from './Components/Filterbar';
-import MainLayout from './layout/MainLayout';
-import ProfileHeader from '@/components/layout/ProfileHeader';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllLeadData, setFilterValues, setRefresh } from '../redux/leadSlice';
-import { formatDate } from '../helpers/conversion';
-import api from '../helpers/Api';
+import { useNavigate } from 'react-router-dom';
+import { getAllDataEntryLeads, deleteDataEntryLead } from '../redux/dataEntrySlice';
+import { formatCurrency, formatDate } from '../components/utils';
+import Loader from "../components/ui/Loader";
 import Toastify from '../helpers/Toastify';
-import DeleteModal from '@/components/employee/DeleteModal';
-
-const StyledTableRow = styled(TableRow)(() => ({
-  height: 44,
-  lineHeight: '44px',
-  fontSize: '14px',
-  color:'#363636'
-}));
-
-const StyledTableCell = styled(TableCell)(() => ({
-  padding: 0,
-  height: 44,
-  lineHeight: '44px',
-  fontSize: '14px',
-  color: "#818181",
-}));
+import {
+  IosShare as IosShareIcon, Search as SearchIcon, Delete as DeleteIcon, Visibility as VisibilityIcon, BorderColor as BorderColorIcon, FileUpload as FileUploadIcon,
+  Close as CloseIcon, FileDownload as FileDownloadIcon, PersonAdd as PersonAddIcon, Description as DocIcon
+} from '@mui/icons-material';
+import * as XLSX from 'xlsx';
+import CircularProgress from '@mui/material/CircularProgress';
+import '../Telecaller/telecaller.css';
 
 
-export default function LeadDataList() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const {isRefresh,isLoading,filterOptions,leadsData} = useSelector((state)=>state.leads)
-  const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(1); // page is 1-based for MUI Pagination
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [search,setSearch] = useState('')
-  const [leadId, setLeadId] = useState(null);
-  const [deleteLoading,setDeleteLoading] = useState(false)
-  const [opendeleteModal,setOpenDeleteModal] = useState (false)
-  
- 
-console.log(leadsData,"led");
 
+const LeadDataList = () => {
 
- const handlePageChange = (event, page) => {
-     console.log("page", page); 
-     setPage(page);
+  const columns = ["Lead Name", "Phone Number", "Alternate Number", "Gmail", "Location", "Loan Amount", "Loan Type", "Lead Created Date", "Option"];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { dataEntryLeads, dataEntryLeadPagination, dataEntryLeadLoading } = useSelector(state => state.dataEntry);
 
-     dispatch(setFilterValues({ page }));
-   };
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
+  const [isExporting, setIsExporting] = useState(false);
 
+  const params = { page, limit, search: searchTerm, date: dateFilter, status: statusFilter };
 
-   
-  const handleLimitChange = (newRows) => {
-    setRowsPerPage(newRows);
-    setPage(1); 
-    dispatch(setFilterValues({ limit:newRows,page :1}));
-
+  const clearAllFilters = () => {
+    setDateFilter("");
+    setStatusFilter("");
   };
 
-
-  const handleDeleteLead =(id) =>{
-    setLeadId(id);
-    setOpenDeleteModal(true);
- }
-
- const handleDeleteSubmit =async()=>{
-  try {
-       
-      setDeleteLoading(true)
-
-      const {data,status} = await api.deleteALead(leadId)
-
-      if(status === 200){
-          Toastify.success("Holiday deleted successfully")
-          dispatch(setRefresh())
-          setOpenDeleteModal(false)
-
-      }
-      
-  } catch (error) {
-              Toastify.error(error.response.data.message || `something went wrong`);
-      
-  }finally{
-      setDeleteLoading(false)
-
+  const goToViewLeadPage = (id) => {
+    navigate(`/data-entry-view-lead-data/${id}`);
   }
-}
 
+  const goToEditLeadPage = (id) => {
+    navigate(`/data-entry-edit-lead-form/${id}`);
+  }
 
-  useEffect(()=>{
-          dispatch(getAllLeadData(filterOptions))
-        },[filterOptions,isRefresh])
+  const goToAddLeadPage = (id) => {
+    navigate(`/data-entry-add-leads`);
+  }
+
+  const handleDeleteLead = async (id) => {
+    if (deletingId) return;
+    setDeletingId(id);
+    try {
+      const result = await dispatch(deleteDataEntryLead(id)).unwrap();
+      if (result.success) {
+        Toastify.success("Lead deleted successfully.");
+        dispatch(getAllDataEntryLeads(params));
+      }
+    } catch (err) {
+      Toastify.error(err?.message || "Something went wrong!");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const exportLeads = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+
+      const dataForExcel = dataEntryLeads && dataEntryLeads.length > 0 && dataEntryLeads.map(lead => ({
+        "Lead ID": lead._id,
+        "Lead Name": lead.leadName,
+        "Email": lead.email,
+        "Phone": lead.phone,
+        "Alternative Phone": lead.alternativePhone,
+        "Location": lead.location,
+        "Loan Type": lead.loanType?.loanName,
+        "Loan Amount": lead.loanAmount,
+        "Lead Created Date": formatDate(lead.LeadCreatedDate)
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(dataForExcel);
+      const colWidths = [
+        { wch: 25 },  // Lead ID
+        { wch: 20 },  // Lead Name
+        { wch: 25 },  // Email
+        { wch: 15 },  // Phone
+        { wch: 20 },  // Alt Phone
+        { wch: 15 },  // Location
+        { wch: 15 },  // Loan Type ID
+        { wch: 15 },  // Loan Amount
+        { wch: 25 }, // Lead Created Date
+      ];
+      ws['!cols'] = colWidths;
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data Entry Leads");
+      XLSX.writeFile(wb, "data_entry_leads.xlsx");
+
+    } catch (error) {
+      console.error("Export failed:", error);
+      Toastify.error(error?.message || "Something went wrong!");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(getAllDataEntryLeads(params));
+  }, [dispatch, page, limit, searchTerm, dateFilter, statusFilter]);
 
 
   return (
-
     <MainLayout>
-      <ProfileHeader 
-      
-      name='Leads Data'
+      <ProfileHeader name="Leads Data" breadcrumbs={[""]} />
 
-      />
-      <Box p={2}>
-        
-        <Filterbar />
+      <div className='teleCont'>
+        <div className="leadsTableCont border">
 
-        {isLoading ? (
-        // Loading state
-        <Box 
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '100dvh',
-            background: '#f5f5f5',
-            borderRadius: '4px',
-            p: 2
-          }}
-        >
-          {/* <Typography variant="body1">Loading data...</Typography> */}
-          <CircularProgress/>
-        </Box>
-      ) : (
-        <>
-          {leadsData?.leads?.length === 0 ? (
-            // No Data Found state
-            <Box 
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '300px',
-                background: '#f5f5f5',
-                borderRadius: '4px',
-                p: 3
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                No Leads Found
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                Try adjusting your filters or check back later
-              </Typography>
-            </Box>
-          ) :(
-            <>
-        <TableContainer elevation={1} sx={{ borderRadius: 2, marginTop:"20px", background:"white", padding:'10px' }}>
-          <Table>
-            <TableHead>
-              <StyledTableRow>
-                <StyledTableCell padding="checkbox">
-                  {/* <Checkbox
-                    checked={selected.length === paginatedRows.length && paginatedRows.length > 0}
-                    onChange={handleSelectAll}
-                  /> */}
-                </StyledTableCell>
-                {['Lead Name', 'Phone Number', 'Alternate Number', 'Gmail', 'Location', 'Loan Amount', 'Loan Type', 'Lead Created Date', 'Option'].map((label) => (
-                  <StyledTableCell key={label} sx={{ fontWeight: 600, color: "#363636" }}>
-                    {label}
-                  </StyledTableCell>
-                ))}
-              </StyledTableRow>
-            </TableHead>
-            <TableBody>
-              {leadsData?.leads?.map((row,index) => (
-                <StyledTableRow key={row._id}>
-                  <StyledTableCell padding="checkbox">
-                    {/* <Checkbox
-                      checked={selected.includes(row._id)}
-                      onChange={() => handleSelectRow(row._id)}
-                    /> */}
+          <div className="filterAndActions">
+            <div className="teleFilterWrapper">
+              <button className={`teleFilterBtn ${!dateFilter && !statusFilter ? 'active' : ''}`} onClick={clearAllFilters}>
+                All
+              </button>
+              <input
+                type="date"
+                className="styledSelect"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              />
+              <select
+                className="styledSelect"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="">All Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="INPROGRESS">In Progress</option>
+                <option value="CLOSED">Closed</option>
+                <option value="DROPPED">Dropped</option>
+              </select>
+            </div>
 
-{(leadsData?.pagination?.currentPage - 1) * leadsData?.pagination?.leadsPerPage + index + 1}
+            <div className="searchAndActions">
+              <div className="teleSearchWrapper">
+                <SearchIcon />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="teleSearchInput"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <button className="teleBtn" onClick={exportLeads}><IosShareIcon /> Export</button>
+              <button className="teleBtn" onClick={goToAddLeadPage}>Add Leads</button>
+            </div>
+          </div>
 
-                  </StyledTableCell>
-                  <StyledTableCell>{row?.leadName}</StyledTableCell>
-                  <StyledTableCell>{row?.phone}</StyledTableCell>
-                  <StyledTableCell>{row?.alternativePhone}</StyledTableCell>
-                  <StyledTableCell>{row?.email}</StyledTableCell>
-                  <StyledTableCell>{row?.location}</StyledTableCell>
-                  <StyledTableCell>{row?.loanAmount}</StyledTableCell>
-                  <StyledTableCell>{row?.loanType}</StyledTableCell>
-                  <StyledTableCell>{ formatDate(  row?.LeadCreatedDate)}</StyledTableCell>
-                  <StyledTableCell>
-                    <IconButton  onClick={()=>navigate(`/viewLeadData/${row._id}`)}><Visibility fontSize="small" /></IconButton>
-                    <IconButton onClick={()=>navigate(`/editLeadForm/${row._id}`)}><Edit fontSize="small" /></IconButton>
-                    <IconButton  onClick={()=>handleDeleteLead(row._id)}><Delete fontSize="small" /></IconButton>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="leadsTableWrapper">
+            <table className="leadsTable">
+              <thead>
+                <tr>
+                  <th>
+                    <label className="teleCustomCheckbox">
+                      <input type="checkbox" />
+                      <span className="teleCheckmark"></span>
+                    </label>
+                  </th>
+                  {columns && columns.length > 0 && columns.map((h) => (
+                    <th key={h} className="teleSubHeading">{h}</th>
+                  ))}
+                </tr>
+              </thead>
 
-          {/* Pagination */}
+              <tbody>
+                {dataEntryLeadLoading ? (
+                  <tr>
+                    <td colSpan={columns.length + 1} className="loadingCell">
+                      <Loader />
+                    </td>
+                  </tr>
+                ) : dataEntryLeads?.length === 0 ? (
+                  <tr>
+                    <td colSpan={columns.length + 1} className="noDataCell">
+                      No leads found
+                    </td>
+                  </tr>
+                ) : (
+                  dataEntryLeads?.map((lead) => (
+                    <tr key={lead._id}>
+                      <td>
+                        <label className="teleCustomCheckbox">
+                          <input type="checkbox" />
+                          <span className="teleCheckmark"></span>
+                        </label>
+                      </td>
 
-        </TableContainer>
+                      {/* Common columns */}
+                      <td className="teleText">{lead.leadName || "N/A"}</td>
+                      <td className="teleText">{lead.phone || "N/A"}</td>
+                      <td className="teleText">{lead.alternativePhone || "N/A"}</td>
+                      <td className="teleText">{lead.email || "N/A"}</td>
 
-          <DeleteModal
-                                        isOpen={opendeleteModal}
-                                        close={()=>setOpenDeleteModal(false)}
-                                        handleSubmit={handleDeleteSubmit}
-                                        heading="Confirm Deletion"
-                                        description="Are you sure you want to delete this Lead?"
-                                        loading={deleteLoading}
-                                />
-          <CustomPagination
-            page={leadsData?.pagination?.currentPage}
-            count={leadsData?.pagination?.totalPages}
-            rowsPerPage={leadsData?.pagination?.leadsPerPage}
-            onChange={handlePageChange}
-            onRowsPerPageChange={handleLimitChange}
-          />
-          </>
-          )}
- </>
-      )}
-      </Box>
+                      <td className="teleText">{lead.location || "N/A"}</td>
+                      <td className="teleText">{formatCurrency(lead.loanAmount) || "N/A"}</td>
+                      <td className="teleText">{lead.loanType?.loanName || "N/A"}</td>
+                      <td className="teleText">{formatDate(lead.LeadCreatedDate) || "N/A"}</td>
+                      <td>
+                        <div className='actionIcons'>
+                          <VisibilityIcon onClick={() => goToViewLeadPage(lead._id)} />
+                          <BorderColorIcon onClick={() => goToEditLeadPage(lead._id)} />
+                          {deletingId === lead._id ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <DeleteIcon onClick={() => handleDeleteLead(lead._id)} />
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="telePaginationRow">
+            <div className="teleShowMore">
+              <span className='teleSubHeading'>Show rows:</span>
+              <select className="styledSelect" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
+                <option value={5}>5 items</option>
+                <option value={10}>10 items</option>
+                <option value={20}>20 items</option>
+              </select>
+            </div>
+
+            <div className="telePagination">
+              <button className="telePageBtn" disabled={dataEntryLeadPagination?.isFirst || dataEntryLeadLoading} onClick={() => setPage(prev => Math.max(prev - 1, 1))}>
+                ‹
+              </button>
+
+              {dataEntryLeadPagination && dataEntryLeadPagination.totalPages > 0 && (
+                <>
+                  {Array.from({ length: Math.min(5, dataEntryLeadPagination.totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (dataEntryLeadPagination.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (page <= 3) {
+                      pageNum = i + 1;
+                    } else if (page >= dataEntryLeadPagination.totalPages - 2) {
+                      pageNum = dataEntryLeadPagination.totalPages - 4 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
+
+                    return (
+                      <button
+                        key={pageNum}
+                        className={`telePageBtn ${page === pageNum ? 'telePageActive' : ''}`}
+                        onClick={() => setPage(pageNum)}
+                        disabled={dataEntryLeadLoading}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  {dataEntryLeadPagination.totalPages > 5 && page < dataEntryLeadPagination.totalPages - 2 && (
+                    <span className="telePageDots">...</span>
+                  )}
+
+                  {dataEntryLeadPagination.totalPages > 5 && page < dataEntryLeadPagination.totalPages - 2 && (
+                    <button
+                      className={`telePageBtn ${page === dataEntryLeadPagination.totalPages ? 'telePageActive' : ''}`}
+                      onClick={() => setPage(dataEntryLeadPagination.totalPages)}
+                      disabled={dataEntryLeadLoading}
+                    >
+                      {dataEntryLeadPagination.totalPages}
+                    </button>
+                  )}
+                </>
+              )}
+
+              <button className="telePageBtn" disabled={dataEntryLeadPagination?.isLast || dataEntryLeadLoading} onClick={() => setPage(prev => Math.min(prev + 1, dataEntryLeadPagination?.totalPages || 1))}>
+                ›
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </MainLayout>
   );
-}
+};
+
+export default LeadDataList;

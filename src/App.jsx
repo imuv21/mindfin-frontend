@@ -39,7 +39,7 @@ import EditPayslip from "./pages/Payroll/EditPayslip";
 
 // Data Entry
 import EditLeadForm from "./DataEntry/EditLeadForm";
-import UploadDocumnet from "./DataEntry/UploadDocumnet";
+import AddLeads from "./DataEntry/AddLeads";
 import LeadDataList from "./DataEntry/LeadDataList";
 import ViewLeadData from "./DataEntry/ViewLeadData";
 
@@ -131,10 +131,10 @@ const App = () => {
           <Route path="/notification" element={<Notification />} />
 
           {/* Data Entry */}
-          <Route path="/leadDataList" element={<LeadDataList />} />
-          <Route path="/viewLeadData/:id" element={<ViewLeadData />} />
-          <Route path="/editLeadForm/:id" element={<EditLeadForm />} />
-          <Route path="/uploadDocument" element={<UploadDocumnet />} />
+          <Route path="/data-entry-leads-data" element={<LeadDataList />} />
+          <Route path="/data-entry-view-lead-data/:id" element={<ViewLeadData />} />
+          <Route path="/data-entry-edit-lead-form/:id" element={<EditLeadForm />} />
+          <Route path="/data-entry-add-leads" element={<AddLeads />} />
 
           {/* Admin */}
           <Route path="/adminDashboard" element={<AdminDashboard />} />

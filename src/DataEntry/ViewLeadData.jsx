@@ -1,172 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import {
-    Box,
-    Grid,
-    Paper,
-    Typography,
-    Divider,
-    CircularProgress,
-} from '@mui/material';
-import MainLayout from './layout/MainLayout';
-import ProfileHeader from '@/components/layout/ProfileHeader';
-import { useParams } from 'react-router-dom';
-import api from "../helpers/Api"
-import Toastify from '../helpers/Toastify';
-import { formatDate } from '../helpers/conversion';
-import RoleBreadcrumbs from './layout/RoleBreadcrumbs';
+import React, { useState, useEffect } from 'react';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getADataEntryLead } from '../redux/dataEntrySlice';
+import { formatCurrency, formatDate } from '../components/utils';
+import Loader from "../components/ui/Loader";
+import '../Telecaller/telecaller.css';
+
 
 const ViewLeadData = () => {
-    
-    
-    const {id} = useParams()
-    const [loading,setLoading] = useState(false)
-    const [Data,setData] = useState([])
-   
 
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { dataEntrySingleLead, dataEntrySingleLeadLoading } = useSelector(state => state.dataEntry);
 
-
-    const fetchData =async ()=>{
-        try {
-            setLoading(true)
-
-            const {data,status} = await api.getALead(id)
-            // console.log(data,"da");
-            
-            if(status === 200){
-                setData(data?.data)
-            }
-            
-        } catch (error) {
-                Toastify.error(error.response.data.message || `something went wrong`);
-            
-        }finally{
-            setLoading(false)
-
-        }
+    const goBack = () => {
+        navigate('/data-entry-leads-data');
     }
 
-    useEffect(()=>{
-        fetchData()
-    },[id])
+    useEffect(() => {
+        if (id) {
+            dispatch(getADataEntryLead(id));
+        }
+    }, [dispatch, id]);
 
-    console.log(Data,"viewdata");
-    
 
     return (
         <MainLayout>
-            <ProfileHeader
-             name={loading ? 'Loading...' : Data?.leadName}
-            />
+            <ProfileHeader name="User Name" breadcrumbs={[""]} />
 
-            <RoleBreadcrumbs
-            name='Lead Personal Information'
-            breadcrumbs={['Leads Data' , 'Lead Personal Information']}
-            
-            />
+            <div className='teleCont'>
+                <div className="viewLeadsCont">
 
+                    <div className="pageHeader">
+                        <div className="headerLeft">
+                            <h2 className="teleSupHeading">Lead Personal Information</h2>
+                            <nav className="breadcrumbs">
+                                <span className="bcItem">Leads Data</span>
+                                <span className="bcSeparator">›</span>
+                                <span className="bcItem active">Lead Personal Information</span>
+                            </nav>
+                        </div>
+                        <button className="backBtn" onClick={goBack}>Back</button>
+                    </div>
 
-            {loading ? (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '60vh',
-                    width: '100%',
-                }}
-            >
-                <CircularProgress />
-            </Box>
-        ) : (
-            <Paper
-                elevation={0}
-                sx={{
-                    p: 3,
-                    borderRadius: 2,
-                    backgroundColor: '#fff',
-                    width: '100%',
-                    maxWidth: 740,
-                    marginLeft: '20px',
-                    marginTop: '20px'
-                }}
-            >
-                <Typography variant="subtitle1" fontWeight="bold" mb={2} sx={{fontSize:"14px", color:"#0F172A"}}>
-                    Personal Information
-                </Typography>
+                    {dataEntrySingleLeadLoading ? <Loader /> :
+                        <div className="topRow">
+                            <div className="card leadCard">
+                                <h3 className="teleHeading">Personal Information</h3>
+                                <div className="infoGrid" style={{ width: '60%' }}>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Lead Name</div>
+                                        <div className="teleText">{dataEntrySingleLead?.leadName || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Email Address</div>
+                                        <div className="teleText">{dataEntrySingleLead?.email || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Phone Number</div>
+                                        <div className="teleText">{dataEntrySingleLead?.phone || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Alternate Number</div>
+                                        <div className="teleText">{dataEntrySingleLead?.alternativePhone || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Location</div>
+                                        <div className="teleText">{dataEntrySingleLead?.location || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Loan Type</div>
+                                        <div className="teleText">{dataEntrySingleLead?.loanType || "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Loan Amount</div>
+                                        <div className="teleText">{dataEntrySingleLead?.loanAmount ? formatCurrency(dataEntrySingleLead.loanAmount) : "N/A"}</div>
+                                    </div>
+                                    <div className="field">
+                                        <div className="teleSubHeading">Lead Created Date</div>
+                                        <div className="teleText">{dataEntrySingleLead?.LeadCreatedDate ? formatDate(dataEntrySingleLead.LeadCreatedDate) : "N/A"}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
 
-                <Grid container spacing={2}  >
-                    <Box sx={{ display: 'flex' , flexDirection:'column', width:'48%'}}>
-                      
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Lead Name
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{Data?.leadName}</Typography>
-                                <Divider sx={{ mt: 1, mb: 2,borderColor:'#A2A1A81A' }} />
-                            </Grid>
+                </div>
+            </div>
 
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Email Address
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{Data?.email}</Typography>
-                                <Divider sx={{ mt: 1, mb: 2,borderColor:'#A2A1A81A' }} />
-                            </Grid>
-                      
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Phone Number
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{Data?.phone}</Typography>
-                                <Divider sx={{ mt: 1, mb: 2,borderColor:'#A2A1A81A' }} />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Alternate Number
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{Data?.alternativePhone}</Typography>
-                                <Divider sx={{ mt: 1, borderColor:'#A2A1A81A' }} />
-                            </Grid>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', flexDirection:'column', width:'48%'}}>
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Location
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{Data?.location}</Typography>
-                                <Divider sx={{ mt: 1, mb: 2,borderColor:'#A2A1A81A' }} />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Loan Type
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{Data?.loanType}</Typography>
-                                <Divider sx={{ mt: 1, mb: 2,borderColor:'#A2A1A81A' }} />
-                            </Grid>
-                        
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption" sx={{fontSize:"16px", color:"#A2A1A8"}}>
-                                    Loan Amount
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}} >{Data?.loanAmount}</Typography>
-                                <Divider sx={{ mt: 1, mb: 2,borderColor:'#A2A1A81A' }} />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <Typography variant="caption"  sx={{fontSize:"14px", color:"#A2A1A8"}}>
-                                    Lead Created Date
-                                </Typography>
-                                <Typography sx={{fontSize:"16px", color:"#16151C"}}>{formatDate( Data?.LeadCreatedDate)}</Typography>
-                                <Divider sx={{ mt: 1, borderColor:'#A2A1A81A' }} />
-                            </Grid>
-                       
-                    </Box>
-                </Grid>
-            </Paper>
-        )}
         </MainLayout>
     );
 };

@@ -299,7 +299,7 @@ const LeadsData = () => {
 
     return (
         <MainLayout>
-            <ProfileHeader name="Leads Data" breadcrumbs={["This is leads data"]} />
+            <ProfileHeader name="Leads Data" breadcrumbs={[""]} />
 
             {/* Document Preview Modal */}
             {isPreviewOpen && currentPreviewLead && (
@@ -544,14 +544,10 @@ const LeadsData = () => {
                                                         </span>
                                                     </td>
                                                     <td className="teleText">
-                                                        {lead.creditManger ? (
-                                                            <button className="assignedButton" onClick={() => openAssignModal(lead._id)}>
-                                                                Assigned
-                                                            </button>
+                                                        {lead.creditManger && lead.creditManger !== "null" && lead.creditManger !== "undefined" ? (
+                                                            <button className="assignedButton" onClick={() => openAssignModal(lead._id)}>Assigned</button>
                                                         ) : (
-                                                            <button className="assignButton" onClick={() => openAssignModal(lead._id)}>
-                                                                Assign
-                                                            </button>
+                                                            <button className="assignButton" onClick={() => openAssignModal(lead._id)}>Assign</button>
                                                         )}
                                                     </td>
                                                     <td>

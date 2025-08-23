@@ -81,8 +81,9 @@ const LoanDisbursalDetail = () => {
     const [deletingId, setDeletingId] = useState(null);
 
     useEffect(() => {
-        dispatch(getAllFollowUps(bankId));
-
+        if (bankId) {
+            dispatch(getAllFollowUps(bankId));
+        }
         return () => {
             dispatch(resetFollowUpsState());
         };
@@ -795,12 +796,12 @@ const LoanDisbursalDetail = () => {
                                             <tr>
                                                 <td colSpan="11" className="text-center">Loading follow-ups...</td>
                                             </tr>
-                                        ) : followUps.length === 0 ? (
+                                        ) : followUps?.length === 0 ? (
                                             <tr>
                                                 <td colSpan="11" className="text-center">No follow-ups found</td>
                                             </tr>
                                         ) : (
-                                            followUps.map((item) => (
+                                            followUps?.map((item) => (
                                                 <tr key={item._id}>
                                                     {/* <td><input type="checkbox" /></td> */}
                                                     <td>{formatDate(item.date)}</td>

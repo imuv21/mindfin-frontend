@@ -68,9 +68,6 @@ class Api {
     login = (body) => {
         return this.init().post("/hr/login", body)
     }
-    // loginEmployee = (body) => {
-    //     return this.init().post("/hr/login", body)
-    // }
     branchLogin = (body) => {
         return this.init().post("/hr/branch-login", body)
     }
@@ -180,6 +177,56 @@ class Api {
     deleteFollowUp = (id) => {
         return this.init().delete(`/credit-manager/bank/${id}`);
     }
+
+
+    //topup
+    addTopup = (data) => {
+        return this.init().post("/credit-manager/topup-loan", data);
+    }
+
+    updateTopup = (id, data) => {
+        return this.init().put(`/credit-manager/topup-loan/${id}`, data);
+    }
+
+    getAllTopups = (applicantId) => {
+        return this.init().get(`/credit-manager/topup-loan/applicant/${applicantId}`);
+    }
+
+    getATopup = (id) => {
+        return this.init().get(`/credit-manager/topup-loan/${id}`);
+    }
+
+    deleteTopup = (id) => {
+        return this.init().delete(`/credit-manager/topup-loan/${id}`);
+    }
+
+
+
+    // data-entry
+    getAllDataEntryLeads = (params) => {
+        return this.init().get("/tele-caller/get-all-leads", { params });
+    };
+
+    getADataEntryLead = (id) => {
+        return this.init().get(`/tele-caller/get-a-lead/${id}`);
+    }
+
+    addDataEntryLeads = (data) => {
+        return this.init().post("/tele-caller/add-leads", data);
+    }
+
+    updateDataEntryLead = (id, data) => {
+        return this.init().put(`/tele-caller/update-a-lead/${id}`, data);
+    }
+
+    deleteDataEntryLead = (id) => {
+        return this.init().delete(`/tele-caller/delete-a-lead/${id}`);
+    }
+
+    exportDataEntryLeads = () => {
+        return this.init().get("/tele-caller/export-lead");
+    }
+
 
 
 
