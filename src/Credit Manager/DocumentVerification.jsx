@@ -11,15 +11,14 @@ import CancelIcon from "@mui/icons-material/Cancel";
 const DocumentVerification = () => {
 
     const [showPopup, setShowPopup] = useState(false);
-
-    const documents = [
-        { id: 1, name: "Balance Sheet (2-3 years)", verified: true },
-        { id: 2, name: "GST Returns (GSTR 3B, 1)", verified: true },
-        { id: 3, name: "ITR (2-3 years)", verified: true },
-        { id: 4, name: "Bank Statements (6-12 months)", verified: true },
-        { id: 5, name: "Balance Sheet (2-3 years)", verified: true },
-        { id: 6, name: "Collateral Documents", verified: true },
-    ];
+    const [documents, setDocuments] = useState([
+        { id: 1, name: "Balance Sheet (2-3 years)", verified: false },
+        { id: 2, name: "GST Returns (GSTR 3B, 1)", verified: false },
+        { id: 3, name: "ITR (2-3 years)", verified: false },
+        { id: 4, name: "Bank Statements (6-12 months)", verified: false },
+        { id: 5, name: "Balance Sheet (2-3 years)", verified: false },
+        { id: 6, name: "Collateral Documents", verified: false },
+    ]);
 
     const history = [
         {
@@ -54,21 +53,39 @@ const DocumentVerification = () => {
                 </span>
             );
         }
-        if (doc.pending) {
-            return (
-                <span className="status-cell">
-                    <HourglassEmptyIcon className="status-icon status-pending" />
-                    <span className="teleText">Not Verified</span>
-                </span>
-            );
-        }
         return (
             <span className="status-cell">
-                <CancelIcon className="status-icon status-rejected" />
-                <span className="teleText">Rejected</span>
+                <HourglassEmptyIcon className="status-icon status-pending" />
+                <span className="teleText">Not Verified</span>
             </span>
         );
     };
+
+    const handleCheck = () => {
+        const allVerified = documents.every((doc) => doc.verified);
+        if (allVerified) {
+            setShowPopup(true);
+        } else {
+            alert("Not all documents are verified!");
+        }
+    };
+
+    const closePopup = () => {
+        setShowPopup(false);
+    };
+
+    const handleUpload = (id, event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        setDocuments((prevDocs) =>
+            prevDocs.map((doc) =>
+                doc.id === id ? { ...doc, verified: true } : doc
+            )
+        );
+    };
+
+
 
     const renderHistoryStatus = (s) => {
         if (s === "verified") {
@@ -98,21 +115,7 @@ const DocumentVerification = () => {
         return null;
     };
 
-    const statusLabelClass = (label) =>
-        label === "Eligible" ? "status-label eligible" : label === "RNR" ? "status-label rnr" : "status-label rejected";
-
-    const handleCheck = () => {
-        const allVerified = documents.every(doc => doc.verified);
-        if (allVerified) {
-            setShowPopup(true);
-        } else {
-            alert("Not all documents are verified!");
-        }
-    };
-
-    const closePpup = () => {
-        setShowPopup(false);
-    }
+    const statusLabelClass = (label) => label === "Eligible" ? "status-label eligible" : label === "RNR" ? "status-label rnr" : "status-label rejected";
 
     return (
         <MainLayout>
@@ -143,14 +146,15 @@ const DocumentVerification = () => {
                                 <tr key={doc.id}>
                                     <td>
                                         <div className="doc-row-name">
-                                            <input className="doc-checkbox" type="checkbox" defaultChecked={!!doc.verified} />
+                                            <input className="doc-checkbox" type="checkbox" checked={doc.verified} readOnly />
                                             <span className="teleText">{doc.name}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <a className="upload-link" href="#upload">
+                                        <label className="upload-link">
                                             Upload
-                                        </a>
+                                            <input type="file" style={{ display: "none" }} onChange={(e) => handleUpload(doc.id, e)} />
+                                        </label>
                                     </td>
                                     <td>{renderDocStatus(doc)}</td>
                                 </tr>
@@ -194,7 +198,7 @@ const DocumentVerification = () => {
             {showPopup && (
                 <div className="popup-overlay">
                     <div className="popup-card border">
-                        <CloseIcon onClick={closePpup} />
+                        <CloseIcon onClick={closePopup} />
                         <div className="emoji">🎉</div>
                         <h2 className="teleSupHeading">Eligible for loan</h2>
                         <p className="teleText">Company profile eligible for loan</p>

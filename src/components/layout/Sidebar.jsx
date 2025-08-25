@@ -64,8 +64,9 @@ const navItemsByDesignation = {
       matchPaths: [],
       children: [
         { label: "Leads Data", href: "/credit-manager-lead-data", matchPaths: ["/credit-manager-lead-data", "/credit-manager-view-lead-data/:id", "/credit-manager-edit-lead-data/:id"] },
-        { label: "Document Verification", href: "/document-verification-data", matchPaths: ["/document-verification-data", "/document-verification/:id"] },
+        { label: "CIBIL/CREDIT Score", href: "/cibil-credit-score", matchPaths: ["/cibil-credit-score", "/cibil-check-score/:leadId", "/cibil-history-score"] },
         { label: "Bank Login", href: "/bank-login", matchPaths: ["/bank-login"] },
+        { label: "Document Verification", href: "/document-verification-data", matchPaths: ["/document-verification-data", "/document-verification/:id"] },
         { label: "Disbursal", href: "/loan-disbursal", matchPaths: ["/loan-disbursal", "/loan-disbursal-detail/:id/:bankId"] },
         { label: "Top Up", href: "/top-up", matchPaths: ["/top-up", "/top-up-detail/:id"] },
       ]

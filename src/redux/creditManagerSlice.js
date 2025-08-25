@@ -152,16 +152,14 @@ const initialState = {
     creditLoading: false,
     creditError: null,
     creditLeads: [],
-    creditPagination: {
-        total: 0,
-        totalPages: 0,
-        page: 1,
-        pageLeads: 0,
-        isFirst: true,
-        isLast: true,
-        hasNext: false,
-        hasPrevious: false
-    },
+    total: 0,
+    totalPages: 0,
+    page: 1,
+    pageLeads: 0,
+    isFirst: true,
+    isLast: true,
+    hasNext: false,
+    hasPrevious: false,
 
     singleLeadUpdateLoading: false,
     singleLeadUpdateError: null,
@@ -226,16 +224,15 @@ const creditManagerSlice = createSlice({
                 state.creditLoading = false;
                 state.creditError = null;
                 state.creditLeads = action.payload.leads || [];
-                state.creditPagination = {
-                    total: action.payload.total || 0,
-                    totalPages: action.payload.totalPages || 0,
-                    page: action.payload.page || 1,
-                    pageLeads: action.payload.pageLeads || 0,
-                    isFirst: action.payload.isFirst ?? true,
-                    isLast: action.payload.isLast ?? true,
-                    hasNext: action.payload.hasNext ?? false,
-                    hasPrevious: action.payload.hasPrevious ?? false
-                };
+                
+                state.total = action.payload.total || 0;
+                state.totalPages = action.payload.totalPages || 0;
+                state.page = action.payload.page || 1;
+                state.pageLeads = action.payload.pageLeads || 0;
+                state.isFirst = action.payload.isFirst ?? true;
+                state.isLast = action.payload.isLast ?? true;
+                state.hasNext = action.payload.hasNext ?? false;
+                state.hasPrevious = action.payload.hasPrevious ?? false;
             })
             .addCase(getAllCreditManagerLeads.rejected, (state, action) => {
                 state.creditLoading = false;

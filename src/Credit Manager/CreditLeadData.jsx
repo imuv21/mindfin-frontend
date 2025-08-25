@@ -27,7 +27,7 @@ const CreditLeadData = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { creditLeads, creditPagination, creditLoading, telecallers, telecallersLoading } = useSelector(state => state.credit);
+    const { creditLeads, total, totalPages, hasNext, hasPrevious, creditLoading, creditError, telecallers, telecallersLoading } = useSelector(state => state.credit);
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(5);
@@ -44,6 +44,25 @@ const CreditLeadData = () => {
     const [isExporting, setIsExporting] = useState(false);
 
     const params = { page, limit, search: searchTerm, date: dateFilter, status: statusFilter, teleCaller: activeTelecaller?._id };
+
+
+    useEffect(() => {
+        dispatch(getAllTelecallers());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (telecallers.length > 0 && !activeTelecaller) {
+            setActiveTelecaller(telecallers[0]);
+        }
+    }, [telecallers, activeTelecaller]);
+
+    useEffect(() => {
+        dispatch(getAllCreditManagerLeads(params));
+    }, [dispatch, page, limit, searchTerm, dateFilter, statusFilter, activeTelecaller]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm, dateFilter, statusFilter, activeTelecaller]);
 
 
     const handleTabChange = (telecaller) => {
@@ -232,25 +251,34 @@ const CreditLeadData = () => {
     };
 
 
-    useEffect(() => {
-        dispatch(getAllTelecallers());
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (telecallers.length > 0 && !activeTelecaller) {
-            setActiveTelecaller(telecallers[0]);
+    //pagination
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
         }
-    }, [telecallers, activeTelecaller]);
+    };
+    const getPageNumbers = (currentPage, totalPages) => {
+        if (!totalPages || totalPages <= 0) return [];
+        const pageNumbers = [];
+        const maxPageButtons = 5;
 
-    useEffect(() => {
-        dispatch(getAllCreditManagerLeads(params));
-    }, [dispatch, page, limit, searchTerm, dateFilter, statusFilter, activeTelecaller]);
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
 
-    useEffect(() => {
-        setPage(1);
-    }, [searchTerm, dateFilter, statusFilter, activeTelecaller]);
+        if (endPage - startPage < maxPageButtons - 1) {
+            if (startPage === 1) {
+                endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+            } else if (endPage === totalPages) {
+                startPage = Math.max(1, endPage - maxPageButtons + 1);
+            }
+        }
 
-
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+        return pageNumbers;
+    };
+    const pageNumbers = totalPages && totalPages > 0 ? getPageNumbers(page, totalPages) : [];
 
 
     return (
@@ -443,6 +471,7 @@ const CreditLeadData = () => {
                     </div>
 
                     <div className="telePaginationRow">
+
                         <div className="teleShowMore">
                             <span className='teleSubHeading'>Show rows:</span>
                             <select className="styledSelect" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
@@ -452,40 +481,21 @@ const CreditLeadData = () => {
                             </select>
                         </div>
 
-                        <div className="telePagination">
-                            <button className="telePageBtn" disabled={creditPagination?.isFirst || creditLoading} onClick={() => setPage(prev => Math.max(prev - 1, 1))}>
-                                ‹
-                            </button>
-
-                            {creditPagination?.totalPages > 0 && (
-                                Array.from({ length: Math.min(5, creditPagination.totalPages) }).map((_, index) => {
-                                    let startPage = 1;
-                                    if (creditPagination.totalPages > 5) {
-                                        startPage = Math.min(
-                                            Math.max(1, page - 2),
-                                            creditPagination.totalPages - 4
-                                        );
-                                    }
-
-                                    const pageNum = startPage + index;
-
-                                    return (
-                                        <button
-                                            key={pageNum}
-                                            className={`telePageBtn ${page === pageNum ? 'telePageActive' : ''}`}
-                                            onClick={() => setPage(pageNum)}
-                                            disabled={creditLoading}
-                                        >
-                                            {pageNum}
-                                        </button>
-                                    );
-                                })
-                            )}
-
-                            <button className="telePageBtn" disabled={creditPagination?.isLast || creditLoading} onClick={() => setPage(prev => Math.min(prev + 1, creditPagination?.totalPages || 1))}>
-                                ›
-                            </button>
-                        </div>
+                        {!creditLoading && !creditError && total && total > limit && totalPages > 0 && (
+                            <div className="telePagination">
+                                <button className="telePageBtn" onClick={() => handlePageChange(page - 1)} disabled={!hasPrevious}>
+                                    ‹
+                                </button>
+                                {pageNumbers.map(index => (
+                                    <button key={index} className={`telePageBtn ${index === page ? 'telePageActive' : ''}`} onClick={() => handlePageChange(index)}>
+                                        {index}
+                                    </button>
+                                ))}
+                                <button className="telePageBtn" onClick={() => handlePageChange(page + 1)} disabled={!hasNext}>
+                                    ›
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                 </div>

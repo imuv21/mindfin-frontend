@@ -70,6 +70,10 @@ import LoanDisbursalDetail from './Credit Manager/LoanDisbursalDetail';
 import Topup from './Credit Manager/Topup';
 import TopupDetail from './Credit Manager/TopupDetail';
 
+import CibilCreditScroe from "./Credit Manager/CibilCreditScroe";
+import UploadCibilScore from "./Credit Manager/UploadCibilScore";
+import CheckCibilScore from "./Credit Manager/CheckCibilScore";
+
 // Not Found
 import NotFound from "./pages/NotFound";
 
@@ -163,6 +167,11 @@ const App = () => {
 
           <Route path="/top-up" element={<Topup />} />
           <Route path="/top-up-detail/:id" element={<TopupDetail />} />
+
+          <Route path="/cibil-credit-score" element={<CreditCibilScore />} />
+          <Route path="/cibil-check-score/:leadId" element={<CibilCheckScore />} />
+          <Route path="/cibil-history-score" element={<CibilHistoryScore />} />
+
 
         </Route>
 

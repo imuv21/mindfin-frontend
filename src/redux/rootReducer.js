@@ -11,6 +11,7 @@ import leadsSlice from "./leadSlice";
 import teleCallerSlice from "./telecallerSlice";
 import creditManagerSlice from "./creditManagerSlice";
 import dataEntrySlice from "./dataEntrySlice";
+import creditSlice from "./creditSlice";
 
 
 const rootReducer = combineReducers({
@@ -25,7 +26,9 @@ const rootReducer = combineReducers({
     leads: leadsSlice,
     telecaller: teleCallerSlice,
     credit: creditManagerSlice,
-    dataEntry: dataEntrySlice
+    creditManager: creditSlice,
+    dataEntry: dataEntrySlice,
+
 });
 
 export default rootReducer;

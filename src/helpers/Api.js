@@ -223,8 +223,24 @@ class Api {
         return this.init().delete(`/tele-caller/delete-a-lead/${id}`);
     }
 
-    exportDataEntryLeads = () => {
-        return this.init().get("/tele-caller/export-lead");
+    exportLead = (body) => {
+        return this.init().get(`/tele-caller/export-lead?${body}`)
+    }
+
+    // data-entry
+    getAllLeads = (body) => {
+        return this.init().get(`/tele-caller/get-all-leads?${body}`)
+    }
+    updateALead = (body) => {
+        return this.init().put(`/tele-caller/update-a-lead/${body._id}`, body)
+    }
+    deleteALead = (body) => {
+        return this.init().delete(`/tele-caller/delete-a-lead/${body}`)
+    }
+
+    // cibil score
+    fetchCibilScore = (leadId) => {
+        return this.init().get(`/credit-manager/check-cibil/${leadId}`)
     }
 
 
@@ -432,31 +448,6 @@ class Api {
     dashboardAttendence = (body) => {
         return this.init().get(`/hr/todays-attendence`)
     }
-
-
-
-    // Data - entry
-    addLead = (body) => {
-        return this.init().post(`/tele-caller/add-leads`, body)
-    }
-    getAllLeads = (body) => {
-        return this.init().get(`/tele-caller/get-all-leads?${body}`)
-    }
-    getALead = (body) => {
-        return this.init().get(`/tele-caller/get-a-lead/${body}`)
-    }
-    updateALead = (body) => {
-        return this.init().put(`/tele-caller/update-a-lead/${body._id}`, body)
-    }
-    deleteALead = (body) => {
-        return this.init().delete(`/tele-caller/delete-a-lead/${body}`)
-    }
-    exportLead = (body) => {
-        return this.init().get(`/tele-caller/export-lead?${body}`)
-    }
-
-
-
 
 
     //admin
