@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import MainLayout from '../components/layout/MainLayout';
-import ProfileHeader from './Layout/ProfileHeader';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import { Box, Typography, Button, Checkbox, CircularProgress } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../helpers/Api';

@@ -1,6 +1,6 @@
 import React from 'react';
-import MainLayout from '../components/layout/MainLayout';
-import ProfileHeader from './Layout/ProfileHeader';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
 import { Box, Typography, Button, Checkbox } from '@mui/material';
 
 const CheckCibilScore = () => {

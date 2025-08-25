@@ -9,11 +9,11 @@ import {
 import { Edit, Delete, Visibility } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import MainLayout from '../components/layout/MainLayout';
-import ProfileHeader from './Layout/ProfileHeader';
-import TelecalelrSection from '../CreditManagerModule/Components/TelecallersSection';
-import Filterbar from '../CreditManagerModule/Components/Filterbar';
-import CustomPagination from './Components/Pagination';
+import MainLayout from "../components/layout/MainLayout";
+import ProfileHeader from "../components/layout/ProfileHeader";
+import TelecalelrSection from './components/TelecallersSection';
+import Filterbar from './components/Filterbar';
+import CustomPagination from './components/Pagination';
 import DeleteModal from '@/components/employee/DeleteModal';
 import Toastify from '../helpers/Toastify';
 import api from '../helpers/Api';
