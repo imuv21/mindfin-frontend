@@ -27,7 +27,6 @@ const LeadDetailHistory = () => {
     }
   }, [selectedLead]);
 
-
   const handleAddBankClick = () => {
     setShowBankModal(true);
   };
@@ -74,11 +73,21 @@ const LeadDetailHistory = () => {
     });
   };
 
-  // Prepare all data fields in table format
+  // Fixed getTableData function to handle different loanType formats
   const getTableData = () => {
     if (!selectedLead) return [];
 
-    const bankDetails = selectedLead.bankDetails || {};
+    // Handle loanType - it can be a string or an object
+    const getLoanType = () => {
+      if (typeof selectedLead.loanType === 'string') {
+        return selectedLead.loanType;
+      } else if (selectedLead.loanType?.loanName) {
+        return selectedLead.loanType.loanName;
+      } else if (selectedLead.typeOfLoan) {
+        return selectedLead.typeOfLoan;
+      }
+      return "-";
+    };
 
     return [
       { label: "Lead Name", value: selectedLead.leadName || "-" },
@@ -86,7 +95,7 @@ const LeadDetailHistory = () => {
       { label: "Email", value: selectedLead.email || "-" },
       { label: "Lead Location", value: selectedLead.location || "-" },
       { label: "Location", value: selectedLead.location || "-" },
-      { label: "Type of Loan", value: selectedLead.typeOfLoan || selectedLead.loanType?.loanName || "-" },
+      { label: "Type of Loan", value: getLoanType() },
       { label: "Loan Amount", value: selectedLead.loanAmount ? `₹${selectedLead.loanAmount.toLocaleString()}` : "-" },
     ];
   };
@@ -110,7 +119,6 @@ const LeadDetailHistory = () => {
           }}
         />
       </Box>
-
 
       {/* Lead Details Content */}
       <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
@@ -221,5 +229,3 @@ const LeadDetailHistory = () => {
 };
 
 export default LeadDetailHistory;
-
-

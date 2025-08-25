@@ -27,9 +27,9 @@ export default function CustomPagination({ page, count, rowsPerPage, onChange, o
           onChange={(e) => onRowsPerPageChange(parseInt(e.target.value))}
           sx={{ borderRadius: 2, fontSize: 14, minWidth: 100 }}
         >
+          <MenuItem value={1}>1 Items</MenuItem> //for testing only
+          <MenuItem value={2}>2 Items</MenuItem>
           <MenuItem value={10}>10 Items</MenuItem>
-          <MenuItem value={25}>25 Items</MenuItem>
-          <MenuItem value={50}>50 Items</MenuItem>
         </Select>
       </Box>
 

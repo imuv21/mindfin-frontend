@@ -44,14 +44,10 @@ export default function BankFollowUp() {
     }
   };
 
-  // Get leads data in the same way as the working component
-  const allLeads = Array.isArray(leadsData?.data?.data)
-    ? leadsData.data.data
-    : Array.isArray(leadsData?.data)
-      ? leadsData.data
-      : Array.isArray(leadsData?.leads)
-        ? leadsData.leads
-        : [];
+  // Fixed data access based on your log structure
+  const allLeads = Array.isArray(leadsData?.data?.leads)
+    ? leadsData.data.leads
+    : [];
 
   console.log("Leads Data followup:", leadsData);
   console.log("All Leads followup:", allLeads);
@@ -97,11 +93,11 @@ export default function BankFollowUp() {
                   <td className="h-11 px-3">{row.leadName || "-"}</td>
                   <td className="h-11 px-3">{row.phone || "-"}</td>
                   <td className="h-11 px-3">{row.email || "-"}</td>
-                  <td className="h-11 px-3">{row.location || "-"}</td> {/* Changed from row.leadLocation to row.location */}
+                  <td className="h-11 px-3">{row.location || "-"}</td>
                   <td className="h-11 px-3">
-                    {row.bankDetails?.bankNameText || 
-                     row.bankDetails?.bankName || 
-                     (row.appliedBanks && row.appliedBanks.length > 0 ? row.appliedBanks.join(", ") : "-")}
+                    {row.bankDetails && row.bankDetails.length > 0 
+                      ? row.bankDetails.map(bank => bank.bankName || bank.bankNameText).filter(Boolean).join(", ") || "-"
+                      : "-"}
                   </td>
                   <td className="h-11 px-3">
                     <div className="flex items-center gap-2">

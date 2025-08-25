@@ -139,13 +139,15 @@ export default function CibilCreditScroe() {
     };
 
     // Get all leads from API
-    const allLeads = Array.isArray(leadsData?.data?.data)
-        ? leadsData.data.data
-        : Array.isArray(leadsData?.data)
-            ? leadsData.data
-            : Array.isArray(leadsData?.leads)
-                ? leadsData.leads
-                : [];
+    const allLeads = Array.isArray(leadsData?.data?.leads)
+        ? leadsData.data.leads  
+        : Array.isArray(leadsData?.data?.data)
+            ? leadsData.data.data
+            : Array.isArray(leadsData?.data)
+                ? leadsData.data
+                : Array.isArray(leadsData?.leads)
+                    ? leadsData.leads
+                    : [];
 
     // Apply frontend filtering based on filter options
     const filteredLeads = React.useMemo(() => {
@@ -385,10 +387,10 @@ export default function CibilCreditScroe() {
                                                     </StyledTableCell>
 
                                                     <StyledTableCell>
-                                                        <IconButton onClick={() => navigate(`/credit-manager-edit-lead/${row._id}`)}><Edit fontSize="small" /></IconButton>
+                                                        <IconButton onClick={() => navigate(`/cibil-leads-edit/${row._id}`)}><Edit fontSize="small" /></IconButton>
                                                         <IconButton
                                                             onClick={() => {
-                                                                navigate(`/credit-manager-view-lead/${row._id}`);
+                                                                navigate(`/cibil-leads-view/${row._id}`);
                                                             }}>
                                                             <Visibility fontSize="small" />
                                                         </IconButton>

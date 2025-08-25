@@ -73,6 +73,8 @@ import TopupDetail from './Credit Manager/TopupDetail';
 import CibilCreditScroe from "./Credit Manager/CibilCreditScroe";
 import UploadCibilScore from "./Credit Manager/UploadCibilScore";
 import CheckCibilScore from "./Credit Manager/CheckCibilScore";
+import CibilLeadsView from "./Credit Manager/components/CibilLeadsView";
+import CibilLeadsEdit from "./Credit Manager/components/CibilLeadsEdit";
 
 import BankMain from "./Credit Manager/Bank Details/BankMain";
 import LeadDetailHistory from "./Credit Manager/Bank Details/LeadDetailHistory";
@@ -175,6 +177,9 @@ const App = () => {
           <Route path="/cibil-credit-score" element={<CibilCreditScroe />} />
           <Route path="/cibil-check-score/:leadId" element={<UploadCibilScore />} />
           <Route path="/cibil-history-score" element={<CheckCibilScore />} />
+
+          <Route path="/cibil-leads-view/:id" element={<CibilLeadsView />} />
+          <Route path="/cibil-leads-edit/:id" element={<CibilLeadsEdit />} />
 
           <Route path="/bank-main-page" element={<BankMain />} />
           <Route path="/lead-detail-history/:id" element={<LeadDetailHistory />} />

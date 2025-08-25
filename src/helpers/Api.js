@@ -179,6 +179,66 @@ class Api {
     }
 
 
+    //javad
+    getFilteredCreditManagerLeads = (params) => {
+        return this.init().get("/credit-manager/get-all-credit-manager-lead", { params });
+    }
+    exportCreditManagerLeads = () => {
+        return this.init().get("/credit-manager/export-credit-manager-leads");
+    }
+    getALeadByID = (id) => {
+        return this.init().get(`/credit-manager/get-lead/${id}`);
+    }
+    updateLead = (id, data) => {
+        return this.init().put(`/credit-manager/update-credit-manager-lead/${id}`, data);
+    }
+    updateLeadStatus = (leadId, data) => {
+        return this.init().put(`/credit-manager/update-lead-status/${leadId}`, data);
+    }
+
+    // Bank login 
+    addBankDetails = (body) => {
+        return this.init().post(`/credit-manager/add-bank-entry`, body)
+    }
+    getAllLoanTypes = () => {
+        return this.init().get(`/super-admin/get-all-loan-type`)
+    }
+    getAllBanks = () => {
+        return this.init().get(`/super-admin/get-all-banks`)
+    }
+    getAllBankDetails = (id) => {
+        return this.init().get(`/credit-manager/get-all-bank-details/${id}`);
+    }
+    getBankDetailById = (id) => {
+        return this.init().get(`/credit-manager/get-a-bank/${id}`);
+    }
+    updateBankDetail = (id, updateData) => {
+        return this.init().put(`/credit-manager/update-bank-details/${id}`, updateData);
+    }
+    deleteBankDetail = (id) => {
+        return this.init().delete(`/credit-manager/delete-bank/${id}`); //id->bank entry 
+    }
+
+    //follow up
+    addFollowUp = (body) => {
+        return this.init().post(`/credit-manager/add-followup`, body)
+    }
+    getFollowUpsByBankDetail = (bankDetailId) => {
+        return this.init().get(`/credit-manager/bank/${bankDetailId}`);
+    }
+    getFollowUpById = (id) => {
+        return this.init().get(`/credit-manager/get-a-bank-follow-up/${id}`); //id = followup 
+    }
+    updateFollowUp = (id, updateData) => {
+        return this.init().put(`/credit-manager/bank/${id}`, updateData); //id = followup 
+    }
+    deleteFollowUp = (id) => {
+        return this.init().delete(`/credit-manager/bank/${id}`); //id = followup 
+    }
+
+
+
+
     //topup
     addTopup = (data) => {
         return this.init().post("/credit-manager/topup-loan", data);
@@ -382,6 +442,7 @@ class Api {
     addLeave = (body) => {
         return this.init().post('/hr/add-leave', body)
     }
+
 
 
     //pay-slip

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCreditManagerLeads, deleteBankDetail } from '../../redux/creditSlice';
-import SelectBankModal from "../Bank Details/SelectBankModal";
-import ReSelectBankModal from "../Bank Details/ReSelectBankModal";
-import BankAdd from "../../CreditManagerModule/Bank Details/BankAdd";
-import BankEdit from "../../CreditManagerModule/Bank Details/BankEdit";
+import SelectBankModal from "../components/SelectBankModal";
+import ReSelectBankModal from "../components/ReSelectBankModal";
+import BankAdd from "../Bank Details/BankAdd";
+import BankEdit from "../Bank Details/BankEdit";
 import { useNavigate } from "react-router-dom";
 import Toastify from "../../helpers/Toastify";
 import api from '../../helpers/Api';
@@ -239,7 +239,7 @@ export default function BankApproved() {
           setDeletingLead(false);
         }
       }
-      
+
       handleDeleteModalClose();
     } catch (error) {
       const errorMessage = error?.message || error?.toString() || 'Unknown error';
@@ -279,23 +279,38 @@ export default function BankApproved() {
       console.log('No bank details provided');
       return null;
     }
-    
-    // Check various possible ID fields
-    const id = bankDetails._id || bankDetails.id || bankDetails.bankId;
-    
-    console.log('Bank details object:', bankDetails);
-    console.log('Extracted bank ID:', id);
-    
-    if (!id) {
-      console.warn('Bank details found but no valid ID:', bankDetails);
-      return null;
+
+    // Check if bankDetails is an array
+    if (Array.isArray(bankDetails)) {
+      if (bankDetails.length === 0) {
+        console.log('Bank details array is empty');
+        return null;
+      }
+      // Get the first bank detail's ID
+      const firstBankDetail = bankDetails[0];
+      const id = firstBankDetail._id || firstBankDetail.id || firstBankDetail.bankId;
+      console.log('Bank details array (first item):', firstBankDetail);
+      console.log('Extracted bank ID from array:', id);
+      return id;
+    } else {
+      // Handle case where bankDetails is a single object
+      const id = bankDetails._id || bankDetails.id || bankDetails.bankId;
+      console.log('Bank details object:', bankDetails);
+      console.log('Extracted bank ID:', id);
+      return id;
     }
-    
-    return id;
   };
 
-  const leadsArray =
-    leadsData?.data?.data || leadsData?.data || leadsData?.leads || [];
+  const getBankDetailData = (bankDetails) => {
+    if (!bankDetails) return null;
+    if (Array.isArray(bankDetails)) {
+      return bankDetails.length > 0 ? bankDetails[0] : null;
+    }
+    return bankDetails;
+  };
+
+
+  const leadsArray = leadsData?.leads || leadsData?.data?.leads || [];
   console.log("📊 Leads data for table:", leadsArray);
 
   return (
@@ -330,7 +345,7 @@ export default function BankApproved() {
                   const bankDetailsId = getBankDetailsId(row.bankDetails);
                   // Create unique key using row._id and index as fallback
                   const uniqueKey = row._id || `row-${index}`;
-                  
+
                   return (
                     <tr
                       key={uniqueKey}
@@ -363,42 +378,42 @@ export default function BankApproved() {
                         )}
                       </td>
                       <td className="px-3 py-2 truncate">
-                        {row.bankDetails?.bankerName || "-"}
+                        {getBankDetailData(row.bankDetails)?.bankerName || "-"}
                       </td>
                       <td className="px-3 py-2 truncate">
-                        {row.bankDetails?.emailId || "-"}
+                        {getBankDetailData(row.bankDetails)?.emailId || "-"}
                       </td>
-                      <td className="px-3 py-2 truncate">{row.panNumber || "-"}</td>
-                      <td className="px-3 py-2 truncate">{row.location || "-"}</td>
+                      <td className="px-3 py-2 truncate">{getBankDetailData(row.panNumber) || "-"}</td>
+                      <td className="px-3 py-2 truncate">{getBankDetailData(row.location) || "-"}</td>
                       <td className="px-3 py-2 truncate">
                         {row.typeOfLoan || row.loanType?.loanName || "-"}
                       </td>
                       <td className="px-3 py-2 truncate">
-                        {row.bankDetails?.bankNameText ||
-                          row.bankDetails?.bankName ||
+                        {getBankDetailData(row.bankDetails)?.bankNameText ||
+                          getBankDetailData(row.bankDetails)?.bankName ||
                           "-"}
                       </td>
                       <td className="px-3 py-2">
-                        {row.bankDetails?.rateOfInterest
-                          ? `${row.bankDetails.rateOfInterest}%`
+                        {getBankDetailData(row.bankDetails)?.rateOfInterest
+                          ? `${getBankDetailData(row.bankDetails).rateOfInterest}%`
                           : "-"}
                       </td>
-                      <td className="px-3 py-2">{row.bankDetails?.pf || "-"}</td>
+                      <td className="px-3 py-2">{getBankDetailData(row.bankDetails)?.pf || "-"}</td>
                       <td className="px-3 py-2">
-                        {row.bankDetails?.tenure
-                          ? `${row.bankDetails.tenure}`
-                          : "-"}
-                      </td>
-                      <td className="px-3 py-2">
-                        {row.bankDetails?.insuranceAmount
-                          ? `₹${row.bankDetails.insuranceAmount}`
+                        {getBankDetailData(row.bankDetails)?.tenure
+                          ? `${getBankDetailData(row.bankDetails).tenure}`
                           : "-"}
                       </td>
                       <td className="px-3 py-2">
-                        {getStatusBadge(row.bankDetails?.status)}
+                        {getBankDetailData(row.bankDetails)?.insuranceAmount
+                          ? `₹${getBankDetailData(row.bankDetails).insuranceAmount}`
+                          : "-"}
                       </td>
-                      <td className="px-3 py-2 max-w-[200px] truncate" title={row.bankDetails?.remarks || row.remarks || "-"}>
-                        {row.bankDetails?.remarks || row.remarks || "-"}
+                      <td className="px-3 py-2">
+                        {getStatusBadge(getBankDetailData(row.bankDetails)?.status)}
+                      </td>
+                      <td className="px-3 py-2 max-w-[200px] truncate" title={getBankDetailData(row.bankDetails)?.remarks || row.remarks || "-"}>
+                        {getBankDetailData(row.bankDetails)?.remarks || row.remarks || "-"}
                       </td>
 
                       <td className="px-3 py-2">
